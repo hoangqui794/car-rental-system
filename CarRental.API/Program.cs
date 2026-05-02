@@ -1,4 +1,4 @@
-using CarRental.Application.Interfaces;
+﻿using CarRental.Application.Interfaces;
 using CarRental.Application.Services;
 using CarRental.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +14,8 @@ builder.Services.AddScoped<IApplicationDbContext>(provider =>
 
 builder.Services.AddScoped<IUserService, UserService>();
 
+// url  sẽ được chuyển thành chữ thường, ví dụ: /api/auth/register thay vì /api/Auth/Register
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
