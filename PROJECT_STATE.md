@@ -1,59 +1,122 @@
-# 🚗 SMART CAR RENTAL SYSTEM - TRẠNG THÁI DỰ ÁN (PROJECT STATE)
+﻿# SMART CAR RENTAL SYSTEM - TRANG THAI DU AN (PROJECT STATE)
 
-**Mục đích file:** Lưu trữ toàn bộ ngữ cảnh, tiến độ và cấu trúc dự án để AI đọc và tiếp tục làm việc vào ngày mai mà không cần giải thích lại từ đầu.
-**Ngày cập nhật cuối:** (Phiên làm việc - Đang thực hiện Giai đoạn 2: Login & JWT)
-
----
-
-## 🏗️ 1. KIẾN TRÚC DỰ ÁN (ARCHITECTURE)
-Dự án được xây dựng theo chuẩn **Clean Architecture (4 Layers)**:
-1. **`CarRental.Domain` (Core - Không phụ thuộc ai):** Chứa các Entity (User, Car, Booking...) sinh ra từ Database-First và các Enums (`UserRole`).
-2. **`CarRental.Application` (Business Logic - Phụ thuộc Domain):** Chứa các DTOs, Interfaces, và Services. Giao tiếp với Database thông qua Interface (Dependency Inversion), KHÔNG gọi trực tiếp thư viện hạ tầng.
-3. **`CarRental.Infrastructure` (Data Access - Phụ thuộc Application & Domain):** Chứa `CarRentalDbContext` (cài đặt Npgsql) và thực thi (implement) các Interface của Application.
-4. **`CarRental.API` (Presentation - Phụ thuộc Application & Infrastructure):** Chứa Controllers, Swagger, Program.cs (nơi thiết lập cấu hình và Dependency Injection).
+**Muc dich file:** Luu ngu canh, tien do va cac viec dang mo de tiep tuc nhanh o phien sau.
+**Ngay cap nhat cuoi:** 2026-05-02 (US local date)
 
 ---
 
-## ✅ 2. TIẾN ĐỘ ĐÃ HOÀN THÀNH (WHAT'S DONE)
-
-### 👤 Module 1: Auth & User Management
-**Giai đoạn 1: Đăng ký (Register) & Database (Đã xong 100%)**
-*   [x] **Thiết kế Database:** ERD chuẩn, có Constraint chặt chẽ, Enum roles.
-*   [x] **Sửa lỗi Kiến trúc (Circular Dependency):** Đã gỡ bỏ tham chiếu sai từ Application sang Infrastructure.
-*   [x] **Domain Layer:** Đã tạo `UserRole` Enum (`Admin`, `Owner`, `Customer`).
-*   [x] **Application Layer:** 
-    * Cài đặt thành công `BCrypt.Net-Next` để hash mật khẩu.
-    * Tạo `IApplicationDbContext`.
-    * Tạo `RegisterRequest` DTO (có DataAnnotations kiểm tra Email, Password).
-    * Hoàn thiện `UserService.RegisterAsync` (kiểm tra email trùng, hash mật khẩu bằng BCrypt, dùng `DateTime.UtcNow` fix lỗi DbUpdateException).
-*   [x] **Infrastructure Layer:** Cấu hình `CarRentalDbContext` kế thừa `IApplicationDbContext`.
-*   [x] **API Layer:**
-    * Đăng ký DI cho `CarRentalDbContext`, `IApplicationDbContext`, `IUserService`.
-    * Tạo thành công `AuthController` với API `POST /api/auth/register`.
-    * Cấu hình `LowercaseUrls = true` để chuẩn hóa RESTful URL.
-    * Đã test gọi API thành công, chèn dữ liệu User vào PostgreSQL.
-
-DỰ ÁN HIỆN ĐANG BUILD THÀNH CÔNG (0 Lỗi).
+## 1) KIEN TRUC DU AN (CLEAN ARCHITECTURE)
+Du an gom 4 layer:
+1. `CarRental.Domain`: Entity + Enum core.
+2. `CarRental.Application`: DTO, Interface, Service (business logic).
+3. `CarRental.Infrastructure`: `CarRentalDbContext`, mapping DB, implement data access.
+4. `CarRental.API`: Controller, DI, middleware, Swagger.
 
 ---
 
-## 🚀 3. CÔNG VIỆC TIẾP THEO (TODO FOR NEXT SESSION)
+## 2) TIEN DO DA HOAN THANH
 
-**Giai đoạn 2: Đăng nhập (Login) & Cấu hình JWT (Đang thực hiện)**
-*   [ ] **Bước 1:** Tạo `LoginRequest` DTO.
-*   [ ] **Bước 2:** Cài đặt các Package JWT (`System.IdentityModel.Tokens.Jwt`, `Microsoft.AspNetCore.Authentication.JwtBearer`).
-*   [ ] **Bước 3:** Viết hàm `LoginAsync` trong `UserService` (kiểm tra mật khẩu và cấp Token).
-*   [ ] **Bước 4:** Bổ sung Endpoint `POST /api/auth/login` vào `AuthController`.
-*   [ ] **Bước 5:** Cấu hình Secret Key trong `appsettings.json` và cấu hình Middleware JWT Authentication, Swagger Authorize trong `Program.cs`.
+### Module Auth - Giai doan 1 (Register): HOAN THANH
+- Da co `RegisterRequest` + validation.
+- `UserService.RegisterAsync` da check email trung + hash BCrypt + luu user.
+- API `POST /api/auth/register` hoat dong.
 
-**Giai đoạn 3: Phân quyền (Authorization) & Module Quản lý Xe**
-*   [ ] Dùng `[Authorize]` để khóa các API bảo mật.
-*   [ ] Phân quyền bằng `[Authorize(Roles="...")]` cho Admin, Owner, Customer.
-*   [ ] Chuyển sang Module `Car Management` (Thêm xe, Sửa xe, Upload hình ảnh).
+### Module Auth - Giai doan 2 (Login + JWT): DA HOAN THANH PHAN LOGIN
+- Da them package JWT:
+  - `Microsoft.AspNetCore.Authentication.JwtBearer` (API)
+  - `System.IdentityModel.Tokens.Jwt` (Application)
+- Da cau hinh JWT middleware + Swagger Bearer trong `Program.cs`.
+- Da them DTO:
+  - `LoginRequest`
+  - `LoginResponse`
+  - `RefreshTokenRequest`
+  - `LogoutRequest`
+- Da them endpoint `POST /api/auth/login`.
+- `LoginAsync` da tra ve:
+  - access token
+  - expiresAt
+  - user info (id, email, fullName, role)
+- Da test login thanh cong (HTTP 200, tra JWT).
+
+### Refresh Token groundwork: DA DAT NEN, CHUA XONG FLOW
+- Da co entity `RefreshToken`.
+- Da bo sung `DbSet<RefreshToken>` trong `IApplicationDbContext` + `CarRentalDbContext`.
+- Da map bang `refresh_tokens` trong `OnModelCreating`.
+- `IUserService` da khai bao:
+  - `RefreshAsync(...)`
+  - `LogoutAsync(...)`
+- `UserService` chua implement 2 ham nay (dang `NotImplementedException`).
 
 ---
-*Ghi chú cho AI vào ngày mai: Dự án đang ở nửa sau của Module Auth (Đăng nhập và JWT). Người dùng cần hoàn thành code LoginAsync và cấu hình Program.cs.*
-**⚠️ LƯU Ý QUAN TRỌNG DÀNH CHO AI:** 
-- Tuyệt đối **KHÔNG SỬ DỤNG AGENT** để tự động sửa file hay chạy lệnh khi chưa được yêu cầu. 
-- Hãy đóng vai trò là một **Senior Developer** hướng dẫn **Newbie**. 
-- Chỉ cung cấp code, hướng dẫn chi tiết từng bước và phải **giải thích cặn kẽ TẠI SAO** lại làm như vậy để Newbie tự tay gõ code và hiểu sâu bản chất vấn đề.
+
+## 3) TRANG THAI BUILD/RUN HIEN TAI
+- Solution build thanh cong (lan kiem tra gan nhat: 0 error).
+- JWT auth middleware dang bat.
+- Thu tu middleware hien tai dung: `UseAuthentication()` truoc `UseAuthorization()`.
+
+---
+
+## 4) RUI RO / VAN DE CAN LUU Y
+1. **Migrations source khong co trong repo**
+   - Kiem tra bang `dotnet ef migrations list` hien tra ve: **"No migrations were found."**
+   - Nghia la source migration (`Migrations/*.cs`) hien khong ton tai trong project.
+   - DB van co the dang chay duoc, nhung mat lich su migration trong code se gay kho cho deploy ve sau.
+
+2. **Config key nhay cam**
+   - `Jwt:Key` dang dat trong `appsettings.json`.
+   - Khi deploy that, nen dua qua secret manager / env vars.
+
+3. **Casing key config**
+   - Trong `UserService`, dang doc `"jwt:AccessTokenExpiresMinutes"` (chu thuong).
+   - ASP.NET config khong phan biet hoa thuong, nen van chay; tuy nhien nen thong nhat thanh `"Jwt:AccessTokenExpiresMinutes"` cho de doc.
+
+---
+
+## 5) TODO UU TIEN CAO (NEXT SESSION)
+
+### A. Hoan tat Refresh Token flow (uu tien 1)
+1. Implement `LoginAsync` de tao va luu refresh token (hash).
+2. Implement `RefreshAsync`:
+   - Verify refresh token
+   - Check expired/revoked
+   - Rotate token
+   - Tra cap access token moi + refresh token moi
+3. Implement `LogoutAsync` de revoke refresh token.
+4. Them endpoint API:
+   - `POST /api/auth/refresh`
+   - `POST /api/auth/logout`
+5. Test end-to-end:
+   - login -> access + refresh
+   - access het han -> refresh thanh cong
+   - logout -> refresh cu bi tu choi
+
+### B. Chot migration strategy (uu tien 1)
+- Tao lai/khai phuc source migrations vao repo de dam bao deploy on dinh.
+- Neu tiep tuc code-first, can co migration files duoc commit.
+
+### C. Authorization (uu tien 2)
+- Them `[Authorize]` cho API can bao ve.
+- Them role-based `[Authorize(Roles = ...)]` cho Admin/Owner/Customer.
+
+---
+
+## 6) CAC FILE CHINH DA CHAM VAO PHIEN NAY
+- `CarRental.API/Program.cs`
+- `CarRental.API/Controllers/AuthController.cs`
+- `CarRental.API/appsettings.json`
+- `CarRental.API/CarRental.API.csproj`
+- `CarRental.Application/Interfaces/IUserService.cs`
+- `CarRental.Application/Interfaces/IApplicationDbContext.cs`
+- `CarRental.Application/Services/UserService.cs`
+- `CarRental.Application/DTOs/LoginRequest.cs`
+- `CarRental.Application/DTOs/LoginResponse.cs`
+- `CarRental.Application/DTOs/RefreshTokenRequest.cs`
+- `CarRental.Application/DTOs/LogoutRequest.cs`
+- `CarRental.Domain/Entities/RefreshToken.cs`
+- `CarRental.Infrastructure/Models/CarRentalDbContext.cs`
+
+---
+
+## 7) GHI CHU CHO PHIEN SAU
+- Dung tiep luong Senior mentoring: huong dan tung buoc, giai thich "vi sao".
+- Muc tieu gan nhat: chot Refresh Token flow chuan production-lite.

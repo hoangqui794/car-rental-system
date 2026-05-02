@@ -28,6 +28,7 @@ public partial class CarRentalDbContext : DbContext, IApplicationDbContext
     public virtual DbSet<Review> Reviews { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
     //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -233,6 +234,34 @@ public partial class CarRentalDbContext : DbContext, IApplicationDbContext
             entity.Property(e => e.Role)
                 .HasMaxLength(20)
                 .HasColumnName("role");
+        });
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.ToTable("refresh_tokens");
+
+            entity.HasKey(e => e.Id).HasName("refresh_tokens_pkey");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.TokenHash).HasColumnName("token_hash");
+            entity.Property(e => e.ExpiresAt).HasColumnName("expires_at");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.RevokedAt).HasColumnName("revoked_at");
+            entity.Property(e => e.ReplacedByTokenHash).HasColumnName("replaced_by_token_hash");
+            entity.Property(e => e.CreatedByIp).HasColumnName("created_by_ip");
+            entity.Property(e => e.RevokedByIp).HasColumnName("revoked_by_ip");
+            entity.Property(e => e.ReasonRevoked).HasColumnName("reason_revoked");
+
+            entity.HasIndex(e => e.TokenHash).IsUnique();
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.ExpiresAt);
+            entity.HasIndex(e => e.RevokedAt);
+
+            entity.HasOne(d => d.User)
+                .WithMany(p => p.RefreshTokens)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_refresh_tokens_users");
         });
 
         OnModelCreatingPartial(modelBuilder);

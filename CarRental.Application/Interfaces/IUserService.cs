@@ -10,5 +10,11 @@ namespace CarRental.Application.Interfaces
     public interface IUserService
     {
         Task<string> RegisterAsync(RegisterRequest request);
+
+        Task<LoginResponse> LoginAsync(LoginRequest request);
+
+        Task<LoginResponse> RefreshAsync(RefreshTokenRequest request, string ipAddress);
+
+        Task LogoutAsync(LogoutRequest request, string ipAddress);
     }
 }

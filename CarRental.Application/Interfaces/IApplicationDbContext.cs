@@ -13,6 +13,7 @@ namespace CarRental.Application.Interfaces
         DbSet<Payment> Payments { get; set; }
         DbSet<Review> Reviews { get; set; }
         DbSet<CarImage> CarImages { get; set; }
+        DbSet<RefreshToken> RefreshTokens { get; set; }
 
         // Khai báo hàm lưu dữ liệu
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
