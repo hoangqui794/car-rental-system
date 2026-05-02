@@ -1,7 +1,7 @@
 # 🚗 SMART CAR RENTAL SYSTEM - TRẠNG THÁI DỰ ÁN (PROJECT STATE)
 
 **Mục đích file:** Lưu trữ toàn bộ ngữ cảnh, tiến độ và cấu trúc dự án để AI đọc và tiếp tục làm việc vào ngày mai mà không cần giải thích lại từ đầu.
-**Ngày cập nhật cuối:** (Phiên làm việc Giai đoạn 1 - User Management)
+**Ngày cập nhật cuối:** (Phiên làm việc - Đang thực hiện Giai đoạn 2: Login & JWT)
 
 ---
 
@@ -16,34 +16,44 @@ Dự án được xây dựng theo chuẩn **Clean Architecture (4 Layers)**:
 
 ## ✅ 2. TIẾN ĐỘ ĐÃ HOÀN THÀNH (WHAT'S DONE)
 
-### 👤 Module 1: Auth & User Management (Đang thực hiện)
-**Giai đoạn 1: Đăng ký (Register) & Mã hóa mật khẩu (Hashing)**
-*   [x] **Thiết kế Database:** ERD chuẩn, có Constraint chặt chẽ, Partial Index cho Booking trùng lịch, Enum roles.
+### 👤 Module 1: Auth & User Management
+**Giai đoạn 1: Đăng ký (Register) & Database (Đã xong 100%)**
+*   [x] **Thiết kế Database:** ERD chuẩn, có Constraint chặt chẽ, Enum roles.
 *   [x] **Sửa lỗi Kiến trúc (Circular Dependency):** Đã gỡ bỏ tham chiếu sai từ Application sang Infrastructure.
-*   [x] **Domain Layer:** Đã tạo `UserRole` Enum (`Admin`, `Owner`, `Customer`) để dùng cho C#.
+*   [x] **Domain Layer:** Đã tạo `UserRole` Enum (`Admin`, `Owner`, `Customer`).
 *   [x] **Application Layer:** 
-    * Cài đặt thành công thư viện `BCrypt.Net-Next` để hash mật khẩu.
-    * Tạo `IApplicationDbContext` (đóng vai trò là "Lò nướng" giao tiếp với DB).
+    * Cài đặt thành công `BCrypt.Net-Next` để hash mật khẩu.
+    * Tạo `IApplicationDbContext`.
     * Tạo `RegisterRequest` DTO (có DataAnnotations kiểm tra Email, Password).
-    * Viết xong `UserService` (kế thừa `IUserService`) thực thi logic kiểm tra email trùng, hash mật khẩu bằng BCrypt và lưu xuống Db thông qua Interface.
-*   [x] **Infrastructure Layer:** Đã ép `CarRentalDbContext` kế thừa và thực thi `IApplicationDbContext`. Đã xóa lỗi `private partial` method.
-*   [x] **API Layer (`Program.cs`):** Đã đăng ký thành công Dependency Injection (DI) cho:
-    * `CarRentalDbContext` (kết nối PostgreSQL).
-    * `IApplicationDbContext` (Dùng `GetRequiredService` để tránh tạo 2 instance).
-    * `IUserService` -> `UserService`.
+    * Hoàn thiện `UserService.RegisterAsync` (kiểm tra email trùng, hash mật khẩu bằng BCrypt, dùng `DateTime.UtcNow` fix lỗi DbUpdateException).
+*   [x] **Infrastructure Layer:** Cấu hình `CarRentalDbContext` kế thừa `IApplicationDbContext`.
+*   [x] **API Layer:**
+    * Đăng ký DI cho `CarRentalDbContext`, `IApplicationDbContext`, `IUserService`.
+    * Tạo thành công `AuthController` với API `POST /api/auth/register`.
+    * Cấu hình `LowercaseUrls = true` để chuẩn hóa RESTful URL.
+    * Đã test gọi API thành công, chèn dữ liệu User vào PostgreSQL.
 
-DỰ ÁN HIỆN ĐANG BUILD THÀNH CÔNG 100% (0 Lỗi).
+DỰ ÁN HIỆN ĐANG BUILD THÀNH CÔNG (0 Lỗi).
 
 ---
 
 ## 🚀 3. CÔNG VIỆC TIẾP THEO (TODO FOR NEXT SESSION)
 
-Ngày mai, khi bắt đầu, hãy yêu cầu AI **đọc file này** và chuyển ngay sang **Giai đoạn 2 của Auth**:
+**Giai đoạn 2: Đăng nhập (Login) & Cấu hình JWT (Đang thực hiện)**
+*   [ ] **Bước 1:** Tạo `LoginRequest` DTO.
+*   [ ] **Bước 2:** Cài đặt các Package JWT (`System.IdentityModel.Tokens.Jwt`, `Microsoft.AspNetCore.Authentication.JwtBearer`).
+*   [ ] **Bước 3:** Viết hàm `LoginAsync` trong `UserService` (kiểm tra mật khẩu và cấp Token).
+*   [ ] **Bước 4:** Bổ sung Endpoint `POST /api/auth/login` vào `AuthController`.
+*   [ ] **Bước 5:** Cấu hình Secret Key trong `appsettings.json` và cấu hình Middleware JWT Authentication, Swagger Authorize trong `Program.cs`.
 
-*   **Bước 1:** Tạo `AuthController` trong project API. Mở API Endpoint `POST /api/auth/register` gọi đến `UserService.RegisterAsync`.
-*   **Bước 2:** Chạy thử Swagger để Test thực tế việc lưu User vào PostgreSQL.
-*   **Bước 3:** Viết hàm `LoginAsync` trong `UserService`.
-*   **Bước 4:** Cấu hình JWT (JSON Web Token) trong `Program.cs` và phát hành Token khi người dùng Login thành công.
+**Giai đoạn 3: Phân quyền (Authorization) & Module Quản lý Xe**
+*   [ ] Dùng `[Authorize]` để khóa các API bảo mật.
+*   [ ] Phân quyền bằng `[Authorize(Roles="...")]` cho Admin, Owner, Customer.
+*   [ ] Chuyển sang Module `Car Management` (Thêm xe, Sửa xe, Upload hình ảnh).
 
 ---
-*Ghi chú cho AI vào ngày mai: Tôi đã nắm rất rõ nguyên lý Clean Architecture và Dependency Injection. Hãy hướng dẫn tôi đi thẳng vào việc tạo Controller và JWT Token.*
+*Ghi chú cho AI vào ngày mai: Dự án đang ở nửa sau của Module Auth (Đăng nhập và JWT). Người dùng cần hoàn thành code LoginAsync và cấu hình Program.cs.*
+**⚠️ LƯU Ý QUAN TRỌNG DÀNH CHO AI:** 
+- Tuyệt đối **KHÔNG SỬ DỤNG AGENT** để tự động sửa file hay chạy lệnh khi chưa được yêu cầu. 
+- Hãy đóng vai trò là một **Senior Developer** hướng dẫn **Newbie**. 
+- Chỉ cung cấp code, hướng dẫn chi tiết từng bước và phải **giải thích cặn kẽ TẠI SAO** lại làm như vậy để Newbie tự tay gõ code và hiểu sâu bản chất vấn đề.
