@@ -35,7 +35,7 @@ namespace CarRental.Application.Services
                 FullName = request.FullName,
                 PhoneNumber = request.PhoneNumber,
                 Role = UserRole.Customer.ToString(),
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow
             };
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
