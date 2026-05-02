@@ -251,6 +251,7 @@ public partial class CarRentalDbContext : DbContext, IApplicationDbContext
             entity.Property(e => e.CreatedByIp).HasColumnName("created_by_ip");
             entity.Property(e => e.RevokedByIp).HasColumnName("revoked_by_ip");
             entity.Property(e => e.ReasonRevoked).HasColumnName("reason_revoked");
+            entity.Property(e => e.Version).HasColumnName("xmin").IsRowVersion();
 
             entity.HasIndex(e => e.TokenHash).IsUnique();
             entity.HasIndex(e => e.UserId);

@@ -1,113 +1,312 @@
-﻿# SMART CAR RENTAL SYSTEM - TRANG THAI DU AN (PROJECT STATE)
+# SMART CAR RENTAL SYSTEM - TRANG THAI DU AN (PROJECT STATE)
 
-**Muc dich file:** Luu ngu canh, tien do va cac viec dang mo de tiep tuc nhanh o phien sau.
-**Ngay cap nhat cuoi:** 2026-05-02 (US local date)
-
----
-
-## 1) KIEN TRUC DU AN (CLEAN ARCHITECTURE)
-Du an gom 4 layer:
-1. `CarRental.Domain`: Entity + Enum core.
-2. `CarRental.Application`: DTO, Interface, Service (business logic).
-3. `CarRental.Infrastructure`: `CarRentalDbContext`, mapping DB, implement data access.
-4. `CarRental.API`: Controller, DI, middleware, Swagger.
+**Muc dich file:** Luu ngu canh, cau truc, tien do va cac viec dang mo de tiep tuc nhanh o phien sau.
+**Ngay cap nhat cuoi:** 2026-05-02
 
 ---
 
-## 2) TIEN DO DA HOAN THANH
+## 1) KIEN TRUC DU AN
 
-### Module Auth - Giai doan 1 (Register): HOAN THANH
-- Da co `RegisterRequest` + validation.
-- `UserService.RegisterAsync` da check email trung + hash BCrypt + luu user.
-- API `POST /api/auth/register` hoat dong.
+Du an dang di theo huong Clean Architecture voi 4 layer chinh:
 
-### Module Auth - Giai doan 2 (Login + JWT): DA HOAN THANH PHAN LOGIN
-- Da them package JWT:
-  - `Microsoft.AspNetCore.Authentication.JwtBearer` (API)
-  - `System.IdentityModel.Tokens.Jwt` (Application)
-- Da cau hinh JWT middleware + Swagger Bearer trong `Program.cs`.
-- Da them DTO:
-  - `LoginRequest`
-  - `LoginResponse`
-  - `RefreshTokenRequest`
-  - `LogoutRequest`
-- Da them endpoint `POST /api/auth/login`.
-- `LoginAsync` da tra ve:
-  - access token
-  - expiresAt
-  - user info (id, email, fullName, role)
-- Da test login thanh cong (HTTP 200, tra JWT).
+1. `CarRental.Domain`
+   - Chua entity va enum core.
+   - Khong phu thuoc API/Infrastructure.
+   - File chinh hien co:
+     - `Entities/User.cs`
+     - `Entities/RefreshToken.cs`
+     - `Entities/Car.cs`
+     - `Entities/Booking.cs`
+     - `Entities/Payment.cs`
+     - `Entities/Review.cs`
+     - `Entities/CarImage.cs`
+     - `Enums/UserRole.cs`
 
-### Refresh Token groundwork: DA DAT NEN, CHUA XONG FLOW
-- Da co entity `RefreshToken`.
-- Da bo sung `DbSet<RefreshToken>` trong `IApplicationDbContext` + `CarRentalDbContext`.
-- Da map bang `refresh_tokens` trong `OnModelCreating`.
-- `IUserService` da khai bao:
-  - `RefreshAsync(...)`
-  - `LogoutAsync(...)`
-- `UserService` chua implement 2 ham nay (dang `NotImplementedException`).
+2. `CarRental.Application`
+   - Chua DTO, interface va service business logic.
+   - File chinh hien co:
+     - `DTOs/RegisterRequest.cs`
+     - `DTOs/LoginRequest.cs`
+     - `DTOs/LoginResponse.cs`
+     - `DTOs/RefreshTokenRequest.cs`
+     - `DTOs/LogoutRequest.cs`
+     - `Interfaces/IUserService.cs`
+     - `Interfaces/IApplicationDbContext.cs`
+     - `Services/UserService.cs`
+     - `Exceptions/AppException.cs`
 
----
+3. `CarRental.Infrastructure`
+   - Chua EF Core DbContext va mapping database.
+   - File chinh:
+     - `Models/CarRentalDbContext.cs`
+   - Dang map bang `refresh_tokens`, bao gom optimistic concurrency bang PostgreSQL `xmin`.
 
-## 3) TRANG THAI BUILD/RUN HIEN TAI
-- Solution build thanh cong (lan kiem tra gan nhat: 0 error).
-- JWT auth middleware dang bat.
-- Thu tu middleware hien tai dung: `UseAuthentication()` truoc `UseAuthorization()`.
-
----
-
-## 4) RUI RO / VAN DE CAN LUU Y
-1. **Migrations source khong co trong repo**
-   - Kiem tra bang `dotnet ef migrations list` hien tra ve: **"No migrations were found."**
-   - Nghia la source migration (`Migrations/*.cs`) hien khong ton tai trong project.
-   - DB van co the dang chay duoc, nhung mat lich su migration trong code se gay kho cho deploy ve sau.
-
-2. **Config key nhay cam**
-   - `Jwt:Key` dang dat trong `appsettings.json`.
-   - Khi deploy that, nen dua qua secret manager / env vars.
-
-3. **Casing key config**
-   - Trong `UserService`, dang doc `"jwt:AccessTokenExpiresMinutes"` (chu thuong).
-   - ASP.NET config khong phan biet hoa thuong, nen van chay; tuy nhien nen thong nhat thanh `"Jwt:AccessTokenExpiresMinutes"` cho de doc.
+4. `CarRental.API`
+   - Chua controller, DI, middleware, JWT authentication, Swagger.
+   - File chinh:
+     - `Program.cs`
+     - `Controllers/AuthController.cs`
+     - `Middlewares/ExceptionHandlingMiddleware.cs`
+     - `appsettings.json`
 
 ---
 
-## 5) TODO UU TIEN CAO (NEXT SESSION)
+## 2) TIEN DO AUTH HIEN TAI
 
-### A. Hoan tat Refresh Token flow (uu tien 1)
-1. Implement `LoginAsync` de tao va luu refresh token (hash).
-2. Implement `RefreshAsync`:
-   - Verify refresh token
-   - Check expired/revoked
-   - Rotate token
-   - Tra cap access token moi + refresh token moi
-3. Implement `LogoutAsync` de revoke refresh token.
-4. Them endpoint API:
-   - `POST /api/auth/refresh`
-   - `POST /api/auth/logout`
-5. Test end-to-end:
-   - login -> access + refresh
-   - access het han -> refresh thanh cong
-   - logout -> refresh cu bi tu choi
+### A. Register: DA HOAN THANH
 
-### B. Chot migration strategy (uu tien 1)
-- Tao lai/khai phuc source migrations vao repo de dam bao deploy on dinh.
-- Neu tiep tuc code-first, can co migration files duoc commit.
+- `POST /api/auth/register` da co.
+- `RegisterRequest` co validation.
+- `UserService.RegisterAsync`:
+  - check email trung.
+  - hash password bang BCrypt.
+  - tao user voi role mac dinh `Customer`.
+  - throw `ConflictException` neu email da ton tai.
 
-### C. Authorization (uu tien 2)
+### B. Login + JWT: DA HOAN THANH
+
+- `POST /api/auth/login` da co.
+- `LoginRequest` hien chi gom:
+  - `Email`
+  - `Password`
+- `LoginAsync`:
+  - verify email/password.
+  - tao access token JWT.
+  - tao refresh token raw.
+  - hash refresh token truoc khi luu DB.
+  - tra ve access token + user info.
+- Policy hien tai: **1 user = 1 refresh session active**.
+  - Khi login moi, cac refresh token active cu cua user bi revoke voi reason `New login`.
+
+### C. Refresh Token Flow: DA IMPLEMENT
+
+- `RefreshToken` entity da co:
+  - `TokenHash`
+  - `ExpiresAt`
+  - `CreatedAt`
+  - `RevokedAt`
+  - `ReplacedByTokenHash`
+  - `CreatedByIp`
+  - `RevokedByIp`
+  - `ReasonRevoked`
+  - `Version` map voi PostgreSQL `xmin`.
+- `LoginAsync` da luu refresh token dang hash.
+- `RefreshAsync` da implement:
+  - hash refresh token request.
+  - tim token trong DB.
+  - check invalid/revoked/expired.
+  - rotate token cu sang token moi.
+  - set `RevokedAt`, `RevokedByIp`, `ReasonRevoked = "Rotated"`.
+  - set `ReplacedByTokenHash`.
+  - bat `DbUpdateConcurrencyException` de xu ly double-use refresh token.
+- `LogoutAsync` da implement:
+  - lay refresh token.
+  - hash va tim trong DB.
+  - revoke token voi reason `Logout`.
+  - bat concurrency exception va return im lang neu logout trung.
+
+### D. Refresh Token Cookie Strategy: DANG LAM
+
+- `AuthController.Login` dang:
+  - goi `LoginAsync`.
+  - set refresh token vao cookie `refreshToken`.
+  - xoa `RefreshToken` khoi response body bang `result.RefreshToken = string.Empty`.
+- `AuthController.Refresh` dang:
+  - lay refresh token tu cookie.
+  - tao `RefreshTokenRequest` noi bo de goi service.
+  - set cookie moi sau khi rotate token.
+  - xoa refresh token khoi response body.
+- `AuthController.Logout` dang:
+  - lay refresh token tu cookie.
+  - goi `LogoutAsync`.
+  - delete cookie `refreshToken`.
+- Cookie options hien tai:
+  - `HttpOnly = true`
+  - `Secure = true`
+  - `SameSite = Strict`
+  - `Expires = DateTimeOffset.UtcNow.AddDays(7)`
+
+Can luu y: `Secure = true` dung cho production HTTPS, nhung local HTTP co the khong luu cookie.
+
+---
+
+## 3) PRODUCTION-HARDENING DA LAM
+
+### A. Global Exception Handling: DA LAM
+
+- Da them `CarRental.Application/Exceptions/AppException.cs`.
+- Cac exception hien co:
+  - `BadRequestException`
+  - `UnauthorizedException`
+  - `ConflictException`
+  - `InternalServerException`
+- Da them `CarRental.API/Middlewares/ExceptionHandlingMiddleware.cs`.
+- `Program.cs` da dang ky:
+  - `app.UseMiddleware<ExceptionHandlingMiddleware>();`
+- `AuthController` da duoc don sach:
+  - khong con `try/catch` tung action.
+  - controller mong hon, service throw exception, middleware handle response.
+
+### B. Refresh Token Security: DA LAM MOT PHAN
+
+- Refresh token khong luu raw trong DB.
+- Refresh token luu bang SHA-256 hash.
+- Refresh token da chuyen sang cookie `HttpOnly`.
+- Response body khong con tra refresh token raw cho client.
+
+### C. Concurrency: DA LAM MOT PHAN
+
+- `RefreshToken.Version` da them vao domain entity.
+- EF mapping:
+  - `Version` map vao PostgreSQL system column `xmin`.
+  - dung `.IsRowVersion()`.
+- `RefreshAsync` bat `DbUpdateConcurrencyException`.
+- `LogoutAsync` bat `DbUpdateConcurrencyException`.
+
+---
+
+## 4) TRANG THAI BUILD/RUN HIEN TAI
+
+- `CarRental.Domain` build thanh cong.
+- `CarRental.Application` build thanh cong.
+- `CarRental.API` va `CarRental.Infrastructure` trong moi truong hien tai dang co hien tuong `Build FAILED` nhung khong in error chi tiet.
+  - Chua ket luan chac chan la loi code.
+  - Can build lai trong Visual Studio hoac terminal local day du output.
+- Da tung gap loi restore/build lien quan NuGet/network/sandbox truoc do.
+
+Lenh build da dung gan day:
+
+```powershell
+dotnet build CarRental.Domain\CarRental.Domain.csproj --no-restore
+dotnet build CarRental.Application\CarRental.Application.csproj --no-restore
+dotnet build CarRental.Infrastructure\CarRental.Infrastructure.csproj --no-restore
+dotnet build CarRental.API\CarRental.API.csproj --no-restore
+```
+
+---
+
+## 5) VAN DE / RUI RO CON MO
+
+### A. Secret config chua production-ready
+
+- `Jwt:Key` van dang nam trong `CarRental.API/appsettings.json`.
+- Connection string cung dang co password DB trong `appsettings.json`.
+- Viec can lam:
+  - Dev: dung `dotnet user-secrets`.
+  - Production: dung environment variables hoac secret manager.
+  - Khong commit secret that vao repo.
+
+### B. Cookie expiry dang hard-code
+
+- Cookie `refreshToken` dang set expire `AddDays(7)` trong `AuthController`.
+- DB refresh token expire doc tu config `Jwt:RefreshTokenExpiresDays`.
+- Viec can lam:
+  - Dong bo cookie expiry voi config.
+  - Tot hon: tao strongly typed options `JwtOptions`.
+
+### C. Middleware co the expose message loi 500
+
+- `ExceptionHandlingMiddleware` dang tra `ex.Message` cho moi `AppException`.
+- Neu `InternalServerException` co message nhay cam, client co the thay.
+- Viec can lam:
+  - Neu `StatusCode == 500`, tra message chung.
+  - Log chi tiet noi bo sau nay.
+
+### D. Clean Architecture chua hoan toan sach o transaction
+
+- `UserService.RefreshAsync` dang cast `_context` sang EF `DbContext` de mo transaction.
+- Dung duoc cho du an hien tai, nhung Clean Architecture nghiem tuc nen co abstraction transaction/unit of work.
+- Viec can lam sau:
+  - Them interface transaction vao Application, implement o Infrastructure.
+
+### E. Migration strategy chua chot
+
+- Truoc do `dotnet ef migrations list` tung bao khong co migrations.
+- Source migration chua thay trong repo.
+- Viec can lam:
+  - Chot code-first hay database-first.
+  - Neu code-first, tao migration source va commit.
+  - Neu database-first, can quy trinh scaffold ro rang.
+
+### F. Message con chua dong nhat
+
+- Mot so message trong `UserService` van thieu dau:
+  - `"Refresh token khong hop le"`
+  - `"Refresh token bi thu hoi"`
+  - `"Refresh token da het han"`
+- Nen chuan hoa tieng Viet co dau.
+
+---
+
+## 6) TODO UU TIEN TIEP THEO
+
+### Uu tien 1: Chot chuyen secret ra ngoai config
+
+1. Xoa secret that khoi `appsettings.json`.
+2. Cau hinh `dotnet user-secrets` cho local:
+
+```powershell
+dotnet user-secrets init --project CarRental.API
+dotnet user-secrets set "Jwt:Key" "your-local-dev-secret-min-32-chars" --project CarRental.API
+dotnet user-secrets set "ConnectionStrings:MyCnn" "Host=localhost;Port=5432;Database=car_rental_db;Username=postgres;Password=..." --project CarRental.API
+```
+
+3. Khi deploy, dung env vars:
+
+```powershell
+$env:Jwt__Key="real-production-secret"
+$env:ConnectionStrings__MyCnn="real-production-connection-string"
+```
+
+### Uu tien 2: Dong bo cookie expiry voi config
+
+- Inject `IConfiguration` vao `AuthController` hoac tao options class.
+- `SetRefreshTokenCookie` dung `Jwt:RefreshTokenExpiresDays` thay vi hard-code `7`.
+
+### Uu tien 3: Chinh middleware loi 500
+
+- Neu `AppException.StatusCode == 500`, tra message chung:
+  - `"Da xay ra loi tren server."`
+- Sau nay them logging.
+
+### Uu tien 4: Test end-to-end Auth
+
+Can test bang Swagger/Postman/browser:
+
+1. `register` thanh cong.
+2. `login` thanh cong:
+   - response co access token.
+   - response body khong tra refresh token raw.
+   - cookie `refreshToken` duoc set.
+3. `refresh` khong body:
+   - doc cookie.
+   - rotate refresh token.
+   - set cookie moi.
+4. Dung refresh token cu phai fail.
+5. `logout`:
+   - revoke token.
+   - delete cookie.
+6. `refresh` sau logout phai fail.
+
+### Uu tien 5: Authorization
+
 - Them `[Authorize]` cho API can bao ve.
-- Them role-based `[Authorize(Roles = ...)]` cho Admin/Owner/Customer.
+- Them role-based authorization:
+  - Admin
+  - Owner
+  - Customer
 
 ---
 
-## 6) CAC FILE CHINH DA CHAM VAO PHIEN NAY
+## 7) CAC FILE CHINH DA THAY DOI
+
 - `CarRental.API/Program.cs`
 - `CarRental.API/Controllers/AuthController.cs`
+- `CarRental.API/Middlewares/ExceptionHandlingMiddleware.cs`
 - `CarRental.API/appsettings.json`
-- `CarRental.API/CarRental.API.csproj`
-- `CarRental.Application/Interfaces/IUserService.cs`
-- `CarRental.Application/Interfaces/IApplicationDbContext.cs`
+- `CarRental.Application/Exceptions/AppException.cs`
 - `CarRental.Application/Services/UserService.cs`
+- `CarRental.Application/Interfaces/IUserService.cs`
 - `CarRental.Application/DTOs/LoginRequest.cs`
 - `CarRental.Application/DTOs/LoginResponse.cs`
 - `CarRental.Application/DTOs/RefreshTokenRequest.cs`
@@ -117,6 +316,15 @@ Du an gom 4 layer:
 
 ---
 
-## 7) GHI CHU CHO PHIEN SAU
-- Dung tiep luong Senior mentoring: huong dan tung buoc, giai thich "vi sao".
-- Muc tieu gan nhat: chot Refresh Token flow chuan production-lite.
+## 8) GHI CHU CHO PHIEN SAU
+
+- Tiep tuc phong cach mentoring tung buoc, giai thich vi sao, khong sua qua nhieu khi user muon tu code.
+- Can can than hon voi moi buoc production-hardening:
+  - noi ro local vs production khac nhau the nao.
+  - build/test sau moi chang.
+  - neu thay loi nho, sua gon va note ro.
+- Muc tieu gan nhat:
+  1. Dua secret ra khoi `appsettings.json`.
+  2. Dong bo refresh cookie expiry voi config.
+  3. Chinh middleware khong expose message loi 500.
+  4. Test end-to-end auth flow.

@@ -14,6 +14,7 @@
         public string? CreatedByIp { get; set; }
         public string? RevokedByIp { get; set; }
         public string? ReasonRevoked { get; set; }
+        public uint Version { get; set; }
 
         public virtual User User { get; set; } = null!;
     }

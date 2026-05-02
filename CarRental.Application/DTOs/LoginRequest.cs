@@ -10,8 +10,5 @@ namespace CarRental.Application.DTOs
 
         [Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
         public string Password { get; set; } = string.Empty;
-
-        [Required]
-        public string RefreshToken { get; set; } = string.Empty;
     }
 }
