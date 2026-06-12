@@ -1,4 +1,4 @@
-﻿using CarRental.Application.Interfaces;
+using CarRental.Application.Interfaces;
 using CarRental.Application.Services;
 using CarRental.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +10,7 @@ using CarRental.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionStr = builder.Configuration.GetConnectionString("MyCnn");
+var connectionStr = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CarRentalDbContext>(options =>
     options.UseNpgsql(connectionStr));
 

@@ -242,21 +242,12 @@ dotnet build CarRental.API\CarRental.API.csproj --no-restore
 
 ### Uu tien 1: Chot chuyen secret ra ngoai config
 
-1. Xoa secret that khoi `appsettings.json`.
-2. Cau hinh `dotnet user-secrets` cho local:
+### Uu tien 1: Chot chuyen secret ra ngoai config (ĐÃ HOÀN THÀNH MỘT PHẦN)
 
-```powershell
-dotnet user-secrets init --project CarRental.API
-dotnet user-secrets set "Jwt:Key" "your-local-dev-secret-min-32-chars" --project CarRental.API
-dotnet user-secrets set "ConnectionStrings:MyCnn" "Host=localhost;Port=5432;Database=car_rental_db;Username=postgres;Password=..." --project CarRental.API
-```
-
-3. Khi deploy, dung env vars:
-
-```powershell
-$env:Jwt__Key="real-production-secret"
-$env:ConnectionStrings__MyCnn="real-production-connection-string"
-```
+1. Đã xóa pass của connection string `DefaultConnection` khỏi `appsettings.json`.
+2. Đã dùng `dotnet user-secrets` lưu connection string trỏ tới **Supabase** cho môi trường local.
+3. Jwt Key vẫn còn trong `appsettings.json`, cần cân nhắc xử lý ở bước sau.
+4. Đã tạo mới toàn bộ Migration và push thành công schema (bảng Users, Cars, Bookings...) lên **Supabase PostgreSQL**.
 
 ### Uu tien 2: Dong bo cookie expiry voi config
 
