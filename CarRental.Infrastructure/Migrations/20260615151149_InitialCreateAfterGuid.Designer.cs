@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CarRental.Infrastructure.Migrations
 {
     [DbContext(typeof(CarRentalDbContext))]
-    [Migration("20260612153801_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260615151149_InitialCreateAfterGuid")]
+    partial class InitialCreateAfterGuid
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,8 +64,8 @@ namespace CarRental.Infrastructure.Migrations
                         .HasColumnType("numeric(10,2)")
                         .HasColumnName("total_price");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -118,8 +118,8 @@ namespace CarRental.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("name");
 
-                    b.Property<int>("OwnerId")
-                        .HasColumnType("integer")
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid")
                         .HasColumnName("owner_id");
 
                     b.Property<decimal>("PricePerDay")
@@ -265,8 +265,8 @@ namespace CarRental.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("token_hash");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
                     b.Property<uint>("Version")
@@ -317,8 +317,8 @@ namespace CarRental.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("rating");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -334,12 +334,10 @@ namespace CarRental.Infrastructure.Migrations
 
             modelBuilder.Entity("CarRental.Domain.Entities.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AvatarUrl")
                         .HasColumnType("text")

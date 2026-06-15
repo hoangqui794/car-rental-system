@@ -19,9 +19,9 @@ const Auth: React.FC = () => {
       role,
       fullName: isLogin ? (email.toLowerCase().includes('owner') ? 'Chủ Xe Đẹp Trai' : 'Khách Hàng Vip') : fullName,
     };
-    
+
     localStorage.setItem('user', JSON.stringify(userSession));
-    
+
     if (role === 'Owner') {
       alert(`Đăng nhập Chủ xe thành công! Chuyển hướng sang Bảng quản lý.`);
       navigate('/host-dashboard');
@@ -39,10 +39,10 @@ const Auth: React.FC = () => {
           {/* Left Column: Cover Image & Promo */}
           <div className="relative hidden md:block bg-zinc-900">
             <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent z-10"></div>
-            <img 
-              alt="Premium Car interior" 
-              className="w-full h-full object-cover opacity-80" 
-              src="https://lh3.googleusercontent.com/aida/AP1WRLvbRVVYM8_URC2SfbmXOcUwsz8jUN-zeHnjIuxexa0DfjJeUG-QTB7PlmW3Qh_OMep6MFecxdb7ChdFTNJ_fiqI37YH8fL7nGz1x8GkKMnbhUigv5C-tpSBkI2dFnRdC1kpnL-mTzLm2-_7i-cXq6ynHpWK8xC4_-EX4NHw-W8yU-vJc4_wS73AbaSBc4iZTTIRWl1notOaLeVctxzfjbQEqwM7wa12RziVdahHgBfBR-YnCK7txKbAyg" 
+            <img
+              alt="Premium Car interior"
+              className="w-full h-full object-cover opacity-80"
+              src="https://lh3.googleusercontent.com/aida/AP1WRLvbRVVYM8_URC2SfbmXOcUwsz8jUN-zeHnjIuxexa0DfjJeUG-QTB7PlmW3Qh_OMep6MFecxdb7ChdFTNJ_fiqI37YH8fL7nGz1x8GkKMnbhUigv5C-tpSBkI2dFnRdC1kpnL-mTzLm2-_7i-cXq6ynHpWK8xC4_-EX4NHw-W8yU-vJc4_wS73AbaSBc4iZTTIRWl1notOaLeVctxzfjbQEqwM7wa12RziVdahHgBfBR-YnCK7txKbAyg"
             />
             <div className="absolute bottom-12 left-8 right-8 z-20 text-white">
               <h2 className="font-sans text-[28px] font-bold mb-4">Trải nghiệm di chuyển cao cấp</h2>
@@ -58,17 +58,15 @@ const Auth: React.FC = () => {
             <div className="flex border-b border-zinc-200 mb-8">
               <button
                 onClick={() => setIsLogin(true)}
-                className={`flex-1 pb-3 font-sans text-[16px] font-semibold transition-all border-b-2 ${
-                  isLogin ? 'border-primary text-primary' : 'border-transparent text-zinc-500 hover:text-zinc-800'
-                }`}
+                className={`flex-1 pb-3 font-sans text-[16px] font-semibold transition-all border-b-2 ${isLogin ? 'border-primary text-primary' : 'border-transparent text-zinc-500 hover:text-zinc-800'
+                  }`}
               >
                 Đăng nhập
               </button>
               <button
                 onClick={() => setIsLogin(false)}
-                className={`flex-1 pb-3 font-sans text-[16px] font-semibold transition-all border-b-2 ${
-                  !isLogin ? 'border-primary text-primary' : 'border-transparent text-zinc-500 hover:text-zinc-800'
-                }`}
+                className={`flex-1 pb-3 font-sans text-[16px] font-semibold transition-all border-b-2 ${!isLogin ? 'border-primary text-primary' : 'border-transparent text-zinc-500 hover:text-zinc-800'
+                  }`}
               >
                 Đăng ký
               </button>

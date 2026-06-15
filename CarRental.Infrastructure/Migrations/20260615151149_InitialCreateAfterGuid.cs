@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CarRental.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialCreateAfterGuid : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,8 +16,7 @@ namespace CarRental.Infrastructure.Migrations
                 name: "users",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     password_hash = table.Column<string>(type: "text", nullable: false),
                     full_name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
@@ -37,7 +36,7 @@ namespace CarRental.Infrastructure.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    owner_id = table.Column<int>(type: "integer", nullable: false),
+                    owner_id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     brand = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     price_per_day = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
@@ -63,7 +62,7 @@ namespace CarRental.Infrastructure.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     token_hash = table.Column<string>(type: "text", nullable: false),
                     expires_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -91,7 +90,7 @@ namespace CarRental.Infrastructure.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     car_id = table.Column<int>(type: "integer", nullable: false),
                     start_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     end_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -143,7 +142,7 @@ namespace CarRental.Infrastructure.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     car_id = table.Column<int>(type: "integer", nullable: false),
                     rating = table.Column<int>(type: "integer", nullable: false),
                     comment = table.Column<string>(type: "text", nullable: true),
