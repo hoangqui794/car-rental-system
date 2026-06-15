@@ -7,7 +7,7 @@ public partial class Review
 {
     public int Id { get; set; }
 
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     public int CarId { get; set; }
 

@@ -39,6 +39,7 @@ namespace CarRental.Application.Services
 
             var newUser = new User
             {
+                Id = Guid.NewGuid(),
                 Email = request.Email,
                 PasswordHash = hashedPassword,
                 FullName = request.FullName,
@@ -252,7 +253,7 @@ namespace CarRental.Application.Services
             };
         }
 
-        private RefreshToken CreateRefreshToken(int userId, string rawRefreshToken, int refreshDays, string? ipAddress = null)
+        private RefreshToken CreateRefreshToken(Guid userId, string rawRefreshToken, int refreshDays, string? ipAddress = null)
         {
             return new RefreshToken
             {
