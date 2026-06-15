@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #fcf8ff;
+    color: #1b1b24;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.premium-shadow {
+  box-shadow: 0 10px 30px -10px rgba(53, 37, 205, 0.08);
+}
+
+.car-card-hover {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+}
+
+.car-card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -15px rgba(53, 37, 205, 0.12);
+}
+
+.booking-progress {
+  height: 3px;
+  background: linear-gradient(to right, #3525cd 30%, #e2dfff 30%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
