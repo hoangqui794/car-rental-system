@@ -42,4 +42,20 @@ namespace CarRental.Application.Exceptions
         {
         }
     }
+
+    public sealed class NotFoundException : AppException
+    {
+        public NotFoundException(string message)
+            : base(message, 404)
+        {
+        }
+    }
+
+    public sealed class ForbiddenException : AppException
+    {
+        public ForbiddenException(string message)
+            : base(message, 403)
+        {
+        }
+    }
 }

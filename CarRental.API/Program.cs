@@ -17,7 +17,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins("http://localhost:5173   ")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -31,7 +31,10 @@ builder.Services.AddDbContext<CarRentalDbContext>(options =>
 builder.Services.AddScoped<IApplicationDbContext>(provider =>
     provider.GetRequiredService<CarRentalDbContext>());
 
+//Đăng ký service
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICarService, CarService>();
+
 builder.Services.AddHealthChecks();
 
 var jwtKey = builder.Configuration["Jwt:Key"];
@@ -104,7 +107,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseHttpsRedirection();
+    //app.UseHttpsRedirection();
 }
 
 app.UseCors("AllowFrontend");
