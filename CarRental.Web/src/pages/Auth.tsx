@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { authApi } from '../services/api';
 
 const Auth: React.FC = () => {
   const navigate = useNavigate();
@@ -11,23 +12,30 @@ const Auth: React.FC = () => {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const role = email.toLowerCase().includes('owner') ? 'Owner' : 'Customer';
-    const userSession = {
-      email,
-      role,
-      fullName: isLogin ? (email.toLowerCase().includes('owner') ? 'Chủ Xe Đẹp Trai' : 'Khách Hàng Vip') : fullName,
-    };
+    try {
+      // Gửi dữ liệu đăng nhập lên Backend
+      const response = await authApi.login({ email, password });
+      // Lưu JWT Access Token vào localStorage để đính kèm vào header các request sau
+      localStorage.setItem('token', response.token);
+      // Lưu thông tin User (Tên, Email, Quyền) để hiển thị trên giao diện
+      localStorage.setItem('user', JSON.stringify(response.user));
+      alert(`Đăng nhập thành công! chào ${response.user.fullName}`);
+      if (response.user.role === 'Owner') {
+        navigate('/host-dashboard');
+      } else {
+        navigate('/');
+      }
 
-    localStorage.setItem('user', JSON.stringify(userSession));
+      await authApi.register({ email, password, fullName, phoneNumber: phone });
+      alert('Đăng ký tài khoàn thành công!, Hãy đăng nhập')
+      setIsLogin(true);// Tự động chuyển sang Tab Đăng nhập
 
-    if (role === 'Owner') {
-      alert(`Đăng nhập Chủ xe thành công! Chuyển hướng sang Bảng quản lý.`);
-      navigate('/host-dashboard');
-    } else {
-      alert(`Đăng nhập thành công! Chuyển hướng sang Trang chủ.`);
-      navigate('/');
+    } catch (error: any) {
+      // Hiển thị lỗi chi tiết trả về từ Backend (Ví dụ: Email đã tồn tại, Sai mật khẩu)
+      alert(error.message || 'Có lỗi xảy ra, vui lòng thử lại.');
+
     }
   };
 

@@ -10,19 +10,34 @@ import Profile from './pages/Profile';
 import Success from './pages/Success';
 import NotFound from './pages/NotFound';
 import './App.css';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={
+          <ProtectedRoute allowedRoles={['Customer']}>
+            <Home />
+
+          </ProtectedRoute>
+
+        } />
         <Route path="/auth" element={<Auth />} />
         <Route path="/cars" element={<CarListing />} />
         <Route path="/car-details" element={<CarDetails />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/become-host" element={<BecomeHost />} />
-        <Route path="/host-dashboard" element={<HostDashboard />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/host-dashboard" element={
+          <ProtectedRoute allowedRoles={['Owner']}>
+            <HostDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute allowedRoles={['Customer']}>
+            <Profile />
+          </ProtectedRoute>
+        } />
         <Route path="/success" element={<Success />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { authApi } from '../services/api';
 
 interface UserSession {
   email: string;
@@ -23,7 +24,15 @@ const Navbar: React.FC = () => {
     }
   }, [location]); // Re-run check on page transition
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+
+      await authApi.logout();// Thu hồi refresh token ở BE
+      console.log("Đăng xuất phía BE thành công");
+    } catch (e) {
+      console.error("Đăng xuất phía BE thất bại, tiến hành xóa token ở FE")
+    }
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
     alert('Đã đăng xuất thành công!');
@@ -41,21 +50,19 @@ const Navbar: React.FC = () => {
           SMARTDRIVE
         </Link>
         <div className="hidden md:flex space-x-8 items-center">
-          <Link 
-            className={`font-sans text-[16px] pb-1 transition-colors duration-300 ${
-              isActive('/cars') ? 'text-primary border-b-2 border-primary' : 'text-zinc-600 dark:text-zinc-400 hover:text-primary'
-            }`} 
+          <Link
+            className={`font-sans text-[16px] pb-1 transition-colors duration-300 ${isActive('/cars') ? 'text-primary border-b-2 border-primary' : 'text-zinc-600 dark:text-zinc-400 hover:text-primary'
+              }`}
             to="/cars"
           >
             Tìm xe
           </Link>
-          
+
           {/* Become Host only visible for customers or guests */}
           {(!user || user.role === 'Customer') && (
-            <Link 
-              className={`font-sans text-[16px] pb-1 transition-colors duration-300 ${
-                isActive('/become-host') ? 'text-primary border-b-2 border-primary' : 'text-zinc-600 dark:text-zinc-400 hover:text-primary'
-              }`} 
+            <Link
+              className={`font-sans text-[16px] pb-1 transition-colors duration-300 ${isActive('/become-host') ? 'text-primary border-b-2 border-primary' : 'text-zinc-600 dark:text-zinc-400 hover:text-primary'
+                }`}
               to="/become-host"
             >
               Trở thành chủ xe
@@ -64,10 +71,9 @@ const Navbar: React.FC = () => {
 
           {/* Customer trip history */}
           {user && user.role === 'Customer' && (
-            <Link 
-              className={`font-sans text-[16px] pb-1 transition-colors duration-300 ${
-                isActive('/profile') ? 'text-primary border-b-2 border-primary' : 'text-zinc-600 dark:text-zinc-400 hover:text-primary'
-              }`} 
+            <Link
+              className={`font-sans text-[16px] pb-1 transition-colors duration-300 ${isActive('/profile') ? 'text-primary border-b-2 border-primary' : 'text-zinc-600 dark:text-zinc-400 hover:text-primary'
+                }`}
               to="/profile"
             >
               Chuyến đi của tôi
@@ -76,10 +82,9 @@ const Navbar: React.FC = () => {
 
           {/* Owner Fleet Dashboard */}
           {user && user.role === 'Owner' && (
-            <Link 
-              className={`font-sans text-[16px] pb-1 transition-colors duration-300 ${
-                isActive('/host-dashboard') ? 'text-primary border-b-2 border-primary' : 'text-zinc-600 dark:text-zinc-400 hover:text-primary'
-              }`} 
+            <Link
+              className={`font-sans text-[16px] pb-1 transition-colors duration-300 ${isActive('/host-dashboard') ? 'text-primary border-b-2 border-primary' : 'text-zinc-600 dark:text-zinc-400 hover:text-primary'
+                }`}
               to="/host-dashboard"
             >
               Dashboard Chủ xe
@@ -94,7 +99,7 @@ const Navbar: React.FC = () => {
               <span className="font-sans text-[14px] font-semibold text-zinc-700 bg-zinc-100 px-3 py-1.5 rounded-full">
                 👤 {user.fullName} ({user.role === 'Owner' ? 'Chủ xe' : 'Khách hàng'})
               </span>
-              <button 
+              <button
                 onClick={handleLogout}
                 className="font-sans text-[14px] font-semibold text-error hover:underline"
               >
@@ -103,14 +108,14 @@ const Navbar: React.FC = () => {
             </div>
           ) : (
             <>
-              <Link 
-                className="font-sans text-[16px] text-zinc-600 dark:text-zinc-400 hover:text-primary dark:hover:text-violet-400 transition-colors duration-300" 
+              <Link
+                className="font-sans text-[16px] text-zinc-600 dark:text-zinc-400 hover:text-primary dark:hover:text-violet-400 transition-colors duration-300"
                 to="/auth"
               >
                 Đăng nhập
               </Link>
-              <Link 
-                className="px-6 py-2.5 bg-primary text-white rounded-full font-sans text-[14px] font-medium hover:shadow-lg transition-all duration-300 active:scale-95 hover:bg-primary-container" 
+              <Link
+                className="px-6 py-2.5 bg-primary text-white rounded-full font-sans text-[14px] font-medium hover:shadow-lg transition-all duration-300 active:scale-95 hover:bg-primary-container"
                 to="/auth"
               >
                 Đăng ký

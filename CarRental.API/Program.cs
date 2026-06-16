@@ -13,6 +13,17 @@ var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://*:{port}");
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173/")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+});
+
 var connectionStr = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CarRentalDbContext>(options =>
     options.UseNpgsql(connectionStr));
@@ -96,6 +107,7 @@ if (app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
