@@ -15,20 +15,24 @@ const Auth: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Gửi dữ liệu đăng nhập lên Backend
-      const response = await authApi.login({ email, password });
-      // Lưu JWT Access Token vào localStorage để đính kèm vào header các request sau
-      localStorage.setItem('token', response.token);
-      // Lưu thông tin User (Tên, Email, Quyền) để hiển thị trên giao diện
-      localStorage.setItem('user', JSON.stringify(response.user));
-      alert(`Đăng nhập thành công! chào ${response.user.fullName}`);
-      if (response.user.role === 'Owner') {
-        navigate('/host-dashboard');
+      if (isLogin) {
+        // Gửi dữ liệu đăng nhập lên Backend
+        const response = await authApi.login({ email, password });
+        // Lưu JWT Access Token vào localStorage để đính kèm vào header các request sau
+        localStorage.setItem('token', response.token);
+        // Lưu thông tin User (Tên, Email, Quyền) để hiển thị trên giao diện
+        localStorage.setItem('user', JSON.stringify(response.user));
+        alert(`Đăng nhập thành công! chào ${response.user.fullName}`);
+        if (response.user.role === 'Owner') {
+          navigate('/host-dashboard');
+        } else {
+          navigate('/');
+        }
       } else {
-        navigate('/');
+        await authApi.register({ email, password, fullName, phoneNumber: phone });
+
       }
 
-      await authApi.register({ email, password, fullName, phoneNumber: phone });
       alert('Đăng ký tài khoàn thành công!, Hãy đăng nhập')
       setIsLogin(true);// Tự động chuyển sang Tab Đăng nhập
 
