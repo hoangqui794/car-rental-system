@@ -111,7 +111,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseHttpsRedirection();
+    app.UseHttpsRedirection();S
 }
 
 app.UseCors("AllowFrontend");

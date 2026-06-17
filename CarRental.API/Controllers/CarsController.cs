@@ -1,4 +1,4 @@
-﻿using CarRental.Application.DTOs;
+using CarRental.Application.DTOs;
 using CarRental.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +51,7 @@ namespace CarRental.API.Controllers
         ///  (Chủ xe đăng ký xe mới - Yêu cầu đăng nhập)
         /// </summary>
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Owner")]
         public async Task<IActionResult> Create([FromBody] CreateCarRequest request)
         {
             //Lấy userId từ token
@@ -70,7 +70,7 @@ namespace CarRental.API.Controllers
         /// </summary>
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Owner")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateCarRequest request)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -88,7 +88,7 @@ namespace CarRental.API.Controllers
         /// (Xóa xe - Yêu cầu đăng nhập)
         /// </summary>
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Owner")]
         public async Task<IActionResult> Delete(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

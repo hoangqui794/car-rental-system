@@ -1,4 +1,4 @@
-﻿using CarRental.Application.DTOs;
+using CarRental.Application.DTOs;
 using CarRental.Application.Exceptions;
 using CarRental.Application.Interfaces;
 using CarRental.Domain.Entities;
@@ -13,6 +13,21 @@ namespace CarRental.Application.Services
         public CarService(IApplicationDbContext context)
         {
             _context = context;
+        }
+
+        public async Task ApproveCarAsync(int id)
+        {
+            var car = await _context.Cars.FindAsync(id);
+            if (car == null)
+            {
+                throw new NotFoundException($"Không tìm thấy xe có ID = {id}");
+            }
+            if (car.Status != "Pending")
+            {
+                throw new BadRequestException("Chỉ có thể duyệt những xe đang ở trạng thái Pending");
+            }
+            car.Status = "Available";// Duyệt xe thành công, hiển thị công khai
+            await _context.SaveChangesAsync();
         }
 
         public async Task<CarDto> CreateCarAsync(CreateCarRequest request, Guid ownerId)
@@ -31,7 +46,7 @@ namespace CarRental.Application.Services
                 PricePerDay = request.PricePerDay,
                 Location = request.Location,
                 Description = request.Description,
-                Status = "Available",// Mặc định khi tạo xe mới sẽ có trạng thái là "Available"
+                Status = "Pending",// Mặc định khi tạo xe mới sẽ có trạng thái là "Available"
                 CreatedAt = DateTime.UtcNow
             };
             _context.Cars.Add(car);
@@ -76,6 +91,7 @@ namespace CarRental.Application.Services
           //.Include(c => c.Bookings)
           .Include(c => c.Reviews)
           .AsQueryable();
+            query = query.Where(c => c.Status == "Available"); // Chỉ lấy những xe có trạng thái là "Available"
 
             if (!string.IsNullOrEmpty(location))
             {
@@ -145,7 +161,17 @@ namespace CarRental.Application.Services
             car.Description = request.Description;
             if (!string.IsNullOrWhiteSpace(request.Status))
             {
-                car.Status = request.Status;
+                var allowedStatusesForOwner = new[] { "Available", "Maintenance" };
+
+                var validatedStatus = allowedStatusesForOwner.FirstOrDefault(s => s.Equals(request.Status, StringComparison.OrdinalIgnoreCase
+                    ));
+
+                if (validatedStatus == null)
+                {
+                    throw new BadRequestException("Trạng thái xe không hợp lệ. Bạn chỉ có thể chuyển đổi giữa 'Available' (Sẵn sàng) hoặc 'Maintenance' (Bảo dưỡng).");
+                }
+
+                car.Status = validatedStatus;
             }
             if (!string.IsNullOrWhiteSpace(request.ImageUrl))
             {

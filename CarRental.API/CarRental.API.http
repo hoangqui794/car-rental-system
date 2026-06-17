@@ -1,6 +1,103 @@
-@CarRental.API_HostAddress = http://localhost:5196
+@CarRental.API_HostAddress = http://localhost:8080
+@email_owner = quithse184355@fpt.edu.vn
+@email_admin = truongqui858@gmail.com
+@password = 111111
 
-GET {{CarRental.API_HostAddress}}/weatherforecast/
+### 1. Đăng ký tài khoản CHỦ XE (Owner)
+POST {{CarRental.API_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{email_owner}}",
+  "fullName": "Nguyen Van Owner",
+  "phoneNumber": "0987654321",
+  "password": "{{password}}"
+}
+
+### 2. Đăng nhập CHỦ XE để lấy Token
+# @name ownerLogin
+POST {{CarRental.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email_owner}}",
+  "password": "{{password}}"
+}
+
+### 3. Chủ xe đăng ký xe mới (Trạng thái mặc định sẽ là Pending)
+# @name createCar
+POST {{CarRental.API_HostAddress}}/api/cars
+Authorization: Bearer {{ownerLogin.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "VinFast VF8 2024",
+  "brand": "VinFast",
+  "pricePerDay": 1500000,
+  "location": "District 2, HCMC",
+  "description": "Xe dien thong minh",
+  "imageUrl": "https://example.com/vf8.jpg"
+}
+
+### 4. Kiểm tra danh sách xe công khai (Mong đợi: KHÔNG THẤY xe vừa tạo vì đang Pending)
+GET {{CarRental.API_HostAddress}}/api/cars
 Accept: application/json
 
-###
+### 5. Đăng ký tài khoản ADMIN
+POST {{CarRental.API_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{email_admin}}",
+  "fullName": "System Admin",
+  "phoneNumber": "0123456789",
+  "password": "{{password}}"
+}
+
+### 6. Đăng nhập ADMIN để lấy Token
+# @name adminLogin
+POST {{CarRental.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email_admin}}",
+  "password": "{{password}}"
+}
+
+### 7. Thử dùng quyền Owner để duyệt xe (Mong đợi: Thất bại 403 Forbidden)
+PUT {{CarRental.API_HostAddress}}/api/admin/cars/{{createCar.response.body.$.id}}/approve
+Authorization: Bearer {{ownerLogin.response.body.$.token}}
+
+### 8. Dùng quyền Admin thực tế để duyệt xe (Mong đợi: Thành công 200 OK)
+PUT {{CarRental.API_HostAddress}}/api/admin/cars/{{createCar.response.body.$.id}}/approve
+Authorization: Bearer {{adminLogin.response.body.$.token}}
+
+### 9. Kiểm tra lại danh sách xe công khai (Mong đợi: ĐÃ THẤY xe VinFast vì đã được duyệt)
+GET {{CarRental.API_HostAddress}}/api/cars
+Accept: application/json
+
+### 10. Chủ xe cập nhật trạng thái xe thành bảo dưỡng (Maintenance) - Thành công
+PUT {{CarRental.API_HostAddress}}/api/cars/{{createCar.response.body.$.id}}
+Authorization: Bearer {{ownerLogin.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "VinFast VF8 2024",
+  "brand": "VinFast",
+  "pricePerDay": 1500000,
+  "location": "District 2, HCMC",
+  "status": "Maintenance"
+}
+
+### 11. Chủ xe thử đổi trạng thái sai quy trình (Pending) - Mong đợi: Thất bại 400 Bad Request
+PUT {{CarRental.API_HostAddress}}/api/cars/{{createCar.response.body.$.id}}
+Authorization: Bearer {{ownerLogin.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "VinFast VF8 2024",
+  "brand": "VinFast",
+  "pricePerDay": 1500000,
+  "location": "District 2, HCMC",
+  "status": "Pending"
+}

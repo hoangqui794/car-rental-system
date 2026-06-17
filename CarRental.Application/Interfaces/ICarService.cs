@@ -1,4 +1,4 @@
-﻿using CarRental.Application.DTOs;
+using CarRental.Application.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,5 +21,7 @@ namespace CarRental.Application.Interfaces
         Task DeleteCarAsync(int id, Guid ownerId);
 
         Task<CarDto> UpdateCarAsync(int id, UpdateCarRequest request, Guid ownerId);
+
+        Task ApproveCarAsync(int id);
     }
 }
