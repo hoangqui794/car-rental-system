@@ -137,3 +137,21 @@ Accept: application/json
 GET {{CarRental.API_HostAddress}}/api/bookings/{{createBooking.response.body.$.id}}
 Authorization: Bearer {{ownerLogin.response.body.$.token}}
 Accept: application/json
+### ========================================================
+### BẮT ĐẦU LUỒNG DUYỆT ĐƠN DÀNH CHO CHỦ XE (OWNER APIS)
+### ========================================================
+
+### 16. Chủ xe lấy danh sách đơn đặt xe gửi đến xe của MÌNH
+GET {{CarRental.API_HostAddress}}/api/bookings/my-cars
+Authorization: Bearer {{ownerLogin.response.body.$.token}}
+Accept: application/json
+
+### 17. Chủ xe Duyệt đơn đặt xe (Approve)
+PUT {{CarRental.API_HostAddress}}/api/bookings/1/approve
+Authorization: Bearer {{ownerLogin.response.body.$.token}}
+Content-Type: application/json
+
+### 18. Chủ xe Từ chối đơn đặt xe (Reject - Để test trường hợp huỷ đơn)
+PUT {{CarRental.API_HostAddress}}/api/bookings/1/reject
+Authorization: Bearer {{ownerLogin.response.body.$.token}}
+Content-Type: application/json

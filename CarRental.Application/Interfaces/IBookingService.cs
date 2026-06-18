@@ -14,5 +14,11 @@ namespace CarRental.Application.Interfaces
         Task<IEnumerable<BookingDto>> GetMyBookingsAsync(Guid userId);
 
         Task<BookingDto> GetBookingByIdAsync(int id, Guid userId);
+
+        Task<IEnumerable<BookingDto>> GetBookingsForOwnerAsync(Guid ownerId);
+
+        Task ApproveBookingAsync(int bookingId, Guid ownerId);
+
+        Task RejectBookingAsync(int bookingId, Guid ownerId);
     }
 }

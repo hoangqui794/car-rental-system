@@ -68,5 +68,56 @@ namespace CarRental.API.Controllers
             var result = await _bookingService.GetBookingByIdAsync(id, userid);
             return Ok(result);
         }
+
+        /// <summary>
+        /// API lấy danh sách đơn khách đặt xe của TÔI
+        /// GET: api/bookings/my-cars
+        /// </summary>
+        [HttpGet("my-cars")]
+        [Authorize(Roles = "Owner")]
+        public async Task<IActionResult> GetBookingsForMyCars()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userId, out var ownerId))
+            {
+                return Unauthorized(new { message = "Token chủ xe không hợp lệ." });
+            }
+            var result = await _bookingService.GetBookingsForOwnerAsync(ownerId);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// API Chủ xe Duyệt đơn
+        /// PUT: api/bookings/{id}/approve
+        /// </summary>
+        [HttpPut("{id}/approve")]
+        [Authorize(Roles = "Owner")]
+        public async Task<IActionResult> ApproveBooking(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userId, out var ownerId))
+            {
+                return Unauthorized(new { message = "Token chủ xe không hợp lệ." });
+            }
+            await _bookingService.ApproveBookingAsync(id, ownerId);
+            return Ok(new { message = "Đã phê duyệt đơn đặt xe thành công." });
+        }
+
+        /// <summary>
+        /// API Chủ xe Từ chối đơn
+        /// PUT: api/bookings/{id}/reject
+        /// </summary>
+        [HttpPut("{id}/reject")]
+        [Authorize(Roles = "Owner")]
+        public async Task<IActionResult> RejectBooking(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userId, out var ownerId))
+            {
+                return Unauthorized(new { message = "Token chủ xe không hợp lệ." });
+            }
+            await _bookingService.RejectBookingAsync(id, ownerId);
+            return Ok(new { message = "Đã từ chối đơn đặt xe thành công." });
+        }
     }
 }

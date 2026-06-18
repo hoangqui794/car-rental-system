@@ -15,6 +15,28 @@ namespace CarRental.Application.Services
             _context = context;
         }
 
+        public async Task ApproveBookingAsync(int bookingId, Guid ownerId)
+        {
+            var booking = await _context.Bookings
+                 .Include(b => b.Car)
+                 .FirstOrDefaultAsync(b => b.Id == bookingId);
+
+            if (booking == null)
+            {
+                throw new NotFoundException("Đơn đặt xe không tồn tại.");
+            }
+            if (booking.Car.OwnerId != ownerId)
+            {
+                throw new ForbiddenException("Bạn không có quyền duyệt đơn của xe người khác.");
+            }
+            if (booking.Status != "Pending")
+            {
+                throw new BadRequestException("Chỉ có thể duyệt đơn hàng chờ xác nhận.");
+            }
+            booking.Status = "Confirmed";
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<BookingDto> CreateBookingAsync(CreateBookingRequest request, Guid userId)
         {
             if (request.StartDate.Date < DateTime.UtcNow.Date)
@@ -91,6 +113,17 @@ namespace CarRental.Application.Services
             return MapToBookingDto(booking);
         }
 
+        public async Task<IEnumerable<BookingDto>> GetBookingsForOwnerAsync(Guid ownerId)
+        {
+            var bookings = await _context.Bookings
+                .Include(b => b.Car)
+                .Include(b => b.User)
+                .Where(b => b.Car.OwnerId == ownerId)
+                .OrderByDescending(b => b.CreatedAt)
+                .ToListAsync();
+            return bookings.Select(MapToBookingDto);
+        }
+
         public async Task<IEnumerable<BookingDto>> GetMyBookingsAsync(Guid userId)
         {
             var bookings = await _context.Bookings
@@ -100,6 +133,28 @@ namespace CarRental.Application.Services
                .OrderByDescending(b => b.CreatedAt)
                .ToListAsync();
             return bookings.Select(MapToBookingDto);
+        }
+
+        public async Task RejectBookingAsync(int bookingId, Guid ownerId)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.Car)
+                .FirstOrDefaultAsync(b => b.Id == bookingId);
+
+            if (booking == null)
+            {
+                throw new NotFoundException("Đơn đặt xe không tồn tại.");
+            }
+            if (booking.Car.OwnerId != ownerId)
+            {
+                throw new ForbiddenException("Bạn không có quyền duyệt đơn của xe người khác.");
+            }
+            if (booking.Status != "Pending")
+            {
+                throw new BadRequestException("Chỉ có thể duyệt đơn hàng chờ xác nhận.");
+            }
+            booking.Status = "Canceled";
+            await _context.SaveChangesAsync();
         }
 
         private BookingDto MapToBookingDto(Booking booking)
