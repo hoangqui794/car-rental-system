@@ -11,7 +11,7 @@ namespace CarRental.Application.Interfaces
     {
         Task<IEnumerable<CarDto>> GetAllCarAsync(
             string? location, decimal? minPrice, decimal? maxPrice,
-            string? brand, string? searchTerm
+            string? brand, string? searchTerm, DateTime? startDate = null, DateTime? endDate = null
             );
 
         Task<CarDto> GetCarByIdAsync(int id);
@@ -23,5 +23,7 @@ namespace CarRental.Application.Interfaces
         Task<CarDto> UpdateCarAsync(int id, UpdateCarRequest request, Guid ownerId);
 
         Task ApproveCarAsync(int id);
+
+        Task<IEnumerable<CarDto>> GetPendingCarsAsync();
     }
 }

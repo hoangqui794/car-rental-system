@@ -28,10 +28,12 @@ namespace CarRental.API.Controllers
             [FromQuery] decimal? minPrice,
             [FromQuery] decimal? maxPrice,
             [FromQuery] string? brand,
-            [FromQuery] string? searchTerm
+            [FromQuery] string? searchTerm,
+            [FromQuery] DateTime? startDate,
+            [FromQuery] DateTime? endDate
             )
         {
-            var result = await _carService.GetAllCarAsync(location, minPrice, maxPrice, brand, searchTerm);
+            var result = await _carService.GetAllCarAsync(location, minPrice, maxPrice, brand, searchTerm, startDate, endDate);
             return Ok(result);
         }
 

@@ -31,11 +31,11 @@ namespace CarRental.API.Controllers.Admin
         /// API lấy danh sách toàn bộ xe chờ duyệt (Nếu cần hiển thị danh sách cho Admin duyệt)
         /// GET /api/admin/cars/pending
         /// </summary>
-        //[HttpGet("pending")]
-        //public Task<IActionResult> GetPendingCars()
-        //{
-        //    // (Chúng ta có thể phát triển thêm hàm GetPendingCars trong CarService nếu cần)
-        //    return Ok();
-        //}
+        [HttpGet("pending")]
+        public async Task<IActionResult> GetPendingCars()
+        {
+            var pendingCars = await _carService.GetPendingCarsAsync();
+            return Ok(pendingCars);
+        }
     }
 }

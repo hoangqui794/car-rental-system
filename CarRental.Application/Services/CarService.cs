@@ -83,7 +83,8 @@ namespace CarRental.Application.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<CarDto>> GetAllCarAsync(string? location, decimal? minPrice, decimal? maxPrice, string? brand, string? searchTerm)
+        public async Task<IEnumerable<CarDto>> GetAllCarAsync(string? location, decimal? minPrice, decimal? maxPrice, string? brand, string? searchTerm,
+            DateTime? startDate = null, DateTime? endDate = null)
         {
             var query = _context.Cars
           .Include(c => c.CarImage)
@@ -92,6 +93,12 @@ namespace CarRental.Application.Services
           .Include(c => c.Reviews)
           .AsQueryable();
             query = query.Where(c => c.Status == "Available"); // Chỉ lấy những xe có trạng thái là "Available"
+
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query = query.Where(c => !c.Bookings.Any(b => (b.Status == "Pending" || b.Status == "Confirmed")
+                && b.StartDate <= endDate.Value && b.EndDate >= startDate.Value));
+            }
 
             if (!string.IsNullOrEmpty(location))
             {
@@ -194,6 +201,20 @@ namespace CarRental.Application.Services
             await _context.SaveChangesAsync();
 
             return await GetCarByIdAsync(car.Id);
+        }
+
+        public async Task<IEnumerable<CarDto>> GetPendingCarsAsync()
+        {
+            // Lọc trực tiếp dưới Database: Chỉ lấy xe có Status = "Pending"
+            var query = _context.Cars
+                .Include(c => c.CarImage)
+                .Include(c => c.Owner)
+                .Where(c => c.Status == "Pending");
+
+            var pendingCars = await query.ToListAsync();
+
+            // Map từ Entity sang DTO để trả về cho FE
+            return pendingCars.Select(c => MapToCarDto(c));
         }
 
         // Hàm helper để map Entity sang DTO
