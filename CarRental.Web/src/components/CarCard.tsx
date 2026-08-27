@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Heart, Star, MapPin, Zap, Gauge, Users, ArrowRight } from 'lucide-react';
 
 interface CarCardProps {
   id: number;
@@ -11,9 +12,13 @@ interface CarCardProps {
   reviewsCount: number;
   location: string;
   tags: string[];
+  batteryRange?: string;
+  acceleration?: string;
+  horsepower?: string;
 }
 
 const CarCard: React.FC<CarCardProps> = ({
+  id,
   image,
   brand,
   name,
@@ -22,70 +27,109 @@ const CarCard: React.FC<CarCardProps> = ({
   reviewsCount,
   location,
   tags,
+  batteryRange = "490 km",
+  acceleration = "3.9s",
+  horsepower = "530 HP"
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const formatPrice = (price: number) => {
-    return price.toLocaleString('vi-VN') + ' đ';
-  };
-
   return (
-    <div className="car-card-hover bg-white rounded-[24px] overflow-hidden border border-zinc-200/30 flex flex-col">
-      <div className="relative h-64 bg-surface-container-low overflow-hidden">
-        <img alt={name} className="w-full h-full object-cover" src={image} />
-        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
-          <span className="material-symbols-outlined text-yellow-500 text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-            star
-          </span>
-          <span className="font-sans text-[12px] font-bold">{rating.toFixed(1)}</span>
+    <article className="showroom-card group bg-white rounded-xl border border-[#e5e5ea] overflow-hidden flex flex-col justify-between">
+      
+      {/* Vehicle Image Stage */}
+      <div className="relative aspect-[16/10] bg-[#f5f5f7] overflow-hidden">
+        <img 
+          alt={name} 
+          className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500 ease-out" 
+          src={image} 
+          loading="lazy"
+        />
+        
+        {/* Status Badge */}
+        <div className="absolute top-2.5 left-2.5 bg-[#111113] text-white px-2 py-0.5 rounded text-[10px] font-['Space_Grotesk'] font-bold uppercase tracking-wider">
+          MỚI 2026
         </div>
+
+        {/* Favorite Button */}
         <button 
-          onClick={() => setIsFavorite(!isFavorite)}
-          className={`absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-colors ${
-            isFavorite ? 'text-error' : 'text-zinc-500 hover:text-error'
+          onClick={(e) => {
+            e.preventDefault();
+            setIsFavorite(!isFavorite);
+          }}
+          aria-label={isFavorite ? "Bỏ lưu xe" : "Lưu vào yêu thích"}
+          className={`absolute top-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center transition-colors backdrop-blur-md ${
+            isFavorite 
+              ? 'bg-white text-[#d32f2f]' 
+              : 'bg-white/80 text-neutral-600 hover:text-[#d32f2f]'
           }`}
         >
-          <span className="material-symbols-outlined" style={isFavorite ? { fontVariationSettings: "'FILL' 1" } : {}}>
-            favorite
-          </span>
+          <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-[#d32f2f]' : ''}`} />
         </button>
-      </div>
-      <div className="p-6 flex-grow flex flex-col">
-        <div className="flex justify-between items-start mb-2">
-          <div>
-            <p className="font-sans text-[12px] font-semibold text-primary uppercase tracking-wide">{brand}</p>
-            <h3 className="font-sans text-[24px] font-bold text-zinc-900 mt-1">{name}</h3>
-          </div>
-          <div className="text-right">
-            <p className="font-sans text-[20px] font-bold text-primary">{formatPrice(pricePerDay)}</p>
-            <p className="font-sans text-[12px] text-zinc-500">/ ngày</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-4 py-4 border-y border-zinc-200/20 my-4">
-          <div className="flex items-center gap-1 text-zinc-600">
-            <span className="material-symbols-outlined text-[18px]">location_on</span>
-            <span className="font-sans text-[12px]">{location}</span>
-          </div>
-          <div className="flex items-center gap-1 text-zinc-600">
-            <span className="material-symbols-outlined text-[18px]">reviews</span>
-            <span className="font-sans text-[12px]">{reviewsCount} đánh giá</span>
-          </div>
-        </div>
-        <div className="flex gap-2 mb-6">
-          {tags.map((tag, idx) => (
-            <span key={idx} className="px-3 py-1 bg-surface-container rounded-full font-sans text-[12px] text-zinc-600">
-              {tag}
+
+        {/* Telemetry specs bar */}
+        <div className="absolute bottom-2 inset-x-2 flex items-center justify-between pointer-events-none">
+          <div className="bg-[#111113]/85 backdrop-blur-md px-2.5 py-1 rounded flex items-center gap-2 text-[10px] font-mono text-neutral-200">
+            <span className="flex items-center gap-1 text-white">
+              <Zap className="w-3 h-3 text-[#d32f2f]" />
+              {batteryRange}
             </span>
-          ))}
+            <span className="text-neutral-500">|</span>
+            <span>0-100: {acceleration}</span>
+          </div>
         </div>
-        <Link 
-          to="/car-details" 
-          className="w-full py-4 bg-surface-container-low text-zinc-800 font-sans text-[14px] font-semibold rounded-xl hover:bg-primary hover:text-white text-center block transition-all duration-300"
-        >
-          Xem chi tiết
-        </Link>
       </div>
-    </div>
+
+      {/* Card Content */}
+      <div className="p-4 flex-1 flex flex-col justify-between">
+        
+        <div>
+          {/* Brand & Name */}
+          <span className="font-['Space_Grotesk'] text-[11px] font-bold uppercase tracking-widest text-[#d32f2f]">
+            {brand}
+          </span>
+          <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#1a1a1a] leading-snug mt-0.5 mb-2 line-clamp-1">
+            {name}
+          </h3>
+
+          {/* Location & Rating */}
+          <div className="flex items-center justify-between text-xs text-neutral-500 pb-3 mb-3 border-b border-[#f0f0f2]">
+            <span className="flex items-center gap-1 truncate text-[11px]">
+              <MapPin className="w-3 h-3 text-neutral-400 shrink-0" />
+              {location}
+            </span>
+            <span className="flex items-center gap-1 font-mono text-[11px] font-bold text-neutral-800 shrink-0">
+              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+              {rating.toFixed(1)}
+            </span>
+          </div>
+        </div>
+
+        {/* Price & Action */}
+        <div>
+          <div className="flex items-baseline justify-between mb-3">
+            <span className="text-[11px] font-['Space_Grotesk'] font-semibold uppercase text-neutral-400">
+              Giá thuê trọn gói:
+            </span>
+            <div className="text-right">
+              <span className="font-mono text-lg font-black text-[#d32f2f] tabular-nums">
+                {pricePerDay.toLocaleString('vi-VN')}
+              </span>
+              <span className="text-xs font-bold text-neutral-600 font-mono"> ₫/ngày</span>
+            </div>
+          </div>
+
+          <Link 
+            to="/car-details" 
+            className="w-full py-2.5 bg-[#1a1a1a] hover:bg-[#d32f2f] text-white font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider rounded text-center transition-all duration-150 flex items-center justify-center gap-1.5 shadow-2xs"
+          >
+            <span>Chi tiết & Đặt xe</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+      </div>
+
+    </article>
   );
 };
 

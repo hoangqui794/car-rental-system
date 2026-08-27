@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Phone, MapPin, Clock, Car, User, LogOut, Search, PlusCircle, LayoutDashboard } from 'lucide-react';
 import { authApi } from '../services/api';
 
 interface UserSession {
@@ -18,113 +19,168 @@ const Navbar: React.FC = () => {
     if (session) {
       try {
         setUser(JSON.parse(session));
-      } catch (e) {
+      } catch {
         localStorage.removeItem('user');
       }
     }
-  }, [location]); // Re-run check on page transition
+  }, [location]);
 
   const handleLogout = async () => {
     try {
-
-      await authApi.logout();// Thu hồi refresh token ở BE
-      console.log("Đăng xuất phía BE thành công");
-    } catch (e) {
-      console.error("Đăng xuất phía BE thất bại, tiến hành xóa token ở FE")
+      await authApi.logout();
+    } catch {
+      console.error("Đăng xuất phía BE thất bại");
     }
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
-    alert('Đã đăng xuất thành công!');
     navigate('/');
   };
 
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
+  const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md shadow-sm transition-all duration-300">
-      <div className="max-w-[1280px] mx-auto px-10 flex justify-between items-center h-20">
-        <Link className="font-sans text-[24px] font-bold tracking-tight text-primary dark:text-violet-400" to="/">
-          SMARTDRIVE
-        </Link>
-        <div className="hidden md:flex space-x-8 items-center">
-          <Link
-            className={`font-sans text-[16px] pb-1 transition-colors duration-300 ${isActive('/cars') ? 'text-primary border-b-2 border-primary' : 'text-zinc-600 dark:text-zinc-400 hover:text-primary'
-              }`}
-            to="/cars"
-          >
-            Tìm xe
-          </Link>
+    <header className="fixed top-0 inset-x-0 z-50 shadow-md">
+      
+      {/* 1. TOP UTILITY BAR (From studied reference DNA) */}
+      <div className="bg-[#111113] text-[#8e8e93] text-[11px] font-['Space_Grotesk'] border-b border-[#252528] py-1.5 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+          
+          {/* Left Info: Address & Hours */}
+          <div className="flex items-center gap-4 sm:gap-6">
+            <span className="flex items-center gap-1.5 text-neutral-300">
+              <MapPin className="w-3 h-3 text-[#d32f2f]" />
+              Showroom: Quận 1, TP.HCM & Hoàn Kiếm, Hà Nội
+            </span>
+            <span className="hidden md:flex items-center gap-1.5">
+              <Clock className="w-3 h-3 text-[#d32f2f]" />
+              Phục vụ: 07:00 — 22:00 (Giao xe 24/7)
+            </span>
+          </div>
 
-          {/* Become Host only visible for customers or guests */}
-          {(!user || user.role === 'Customer') && (
-            <Link
-              className={`font-sans text-[16px] pb-1 transition-colors duration-300 ${isActive('/become-host') ? 'text-primary border-b-2 border-primary' : 'text-zinc-600 dark:text-zinc-400 hover:text-primary'
-                }`}
-              to="/become-host"
-            >
-              Trở thành chủ xe
-            </Link>
-          )}
+          {/* Right Info: Hotline & User session */}
+          <div className="flex items-center gap-4">
+            <a href="tel:19008888" className="flex items-center gap-1.5 text-white font-bold hover:text-[#d32f2f] transition-colors">
+              <Phone className="w-3 h-3 text-[#d32f2f]" />
+              Hotline: 1900 8888
+            </a>
+            <span className="text-neutral-600">|</span>
+            {user ? (
+              <div className="flex items-center gap-2">
+                <span className="text-neutral-200 font-bold">{user.fullName}</span>
+                <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400">
+                  {user.role === 'Owner' ? 'Chủ xe' : 'Hội viên'}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="text-neutral-400 hover:text-red-400 ml-1 cursor-pointer"
+                  title="Đăng xuất"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link to="/auth" className="text-neutral-300 hover:text-white transition-colors">
+                  Đăng nhập
+                </Link>
+                <span>/</span>
+                <Link to="/auth" className="text-neutral-300 hover:text-white transition-colors">
+                  Đăng ký
+                </Link>
+              </div>
+            )}
+          </div>
 
-          {/* Customer trip history */}
-          {user && user.role === 'Customer' && (
-            <Link
-              className={`font-sans text-[16px] pb-1 transition-colors duration-300 ${isActive('/profile') ? 'text-primary border-b-2 border-primary' : 'text-zinc-600 dark:text-zinc-400 hover:text-primary'
-                }`}
-              to="/profile"
-            >
-              Chuyến đi của tôi
-            </Link>
-          )}
-
-          {/* Owner Fleet Dashboard */}
-          {user && user.role === 'Owner' && (
-            <Link
-              className={`font-sans text-[16px] pb-1 transition-colors duration-300 ${isActive('/host-dashboard') ? 'text-primary border-b-2 border-primary' : 'text-zinc-600 dark:text-zinc-400 hover:text-primary'
-                }`}
-              to="/host-dashboard"
-            >
-              Dashboard Chủ xe
-            </Link>
-          )}
-        </div>
-
-        {/* Dynamic Auth Section */}
-        <div className="flex items-center space-x-6">
-          {user ? (
-            <div className="flex items-center space-x-4">
-              <span className="font-sans text-[14px] font-semibold text-zinc-700 bg-zinc-100 px-3 py-1.5 rounded-full">
-                👤 {user.fullName} ({user.role === 'Owner' ? 'Chủ xe' : 'Khách hàng'})
-              </span>
-              <button
-                onClick={handleLogout}
-                className="font-sans text-[14px] font-semibold text-error hover:underline"
-              >
-                Đăng xuất
-              </button>
-            </div>
-          ) : (
-            <>
-              <Link
-                className="font-sans text-[16px] text-zinc-600 dark:text-zinc-400 hover:text-primary dark:hover:text-violet-400 transition-colors duration-300"
-                to="/auth"
-              >
-                Đăng nhập
-              </Link>
-              <Link
-                className="px-6 py-2.5 bg-primary text-white rounded-full font-sans text-[14px] font-medium hover:shadow-lg transition-all duration-300 active:scale-95 hover:bg-primary-container"
-                to="/auth"
-              >
-                Đăng ký
-              </Link>
-            </>
-          )}
         </div>
       </div>
-    </nav>
+
+      {/* 2. MAIN NAVIGATION HEADER (Dark Charcoal with Crimson Red Active Block) */}
+      <div className="bg-[#1a1a1a] text-white px-4 sm:px-6 lg:px-8 border-b border-[#2d2d30]">
+        <div className="max-w-7xl mx-auto flex items-center justify-between h-16 sm:h-18">
+          
+          {/* Logo Branding */}
+          <Link to="/" className="flex items-center gap-2.5">
+            <div className="w-9 h-9 bg-[#d32f2f] rounded-lg flex items-center justify-center text-white shadow-xs">
+              <Car className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="font-['Space_Grotesk'] font-black text-xl tracking-tight text-white block leading-none">
+                SMARTDRIVE
+              </span>
+              <span className="font-mono text-[9px] uppercase tracking-widest text-neutral-400 block mt-0.5">
+                Automotive & Luxury Rentals
+              </span>
+            </div>
+          </Link>
+
+          {/* Navigation Items */}
+          <nav className="hidden lg:flex items-center h-full">
+            <Link
+              to="/"
+              className={`h-full flex items-center px-4 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider transition-colors ${
+                isActive('/') ? 'bg-[#d32f2f] text-white' : 'text-neutral-300 hover:text-white hover:bg-[#252528]'
+              }`}
+            >
+              Trang Chủ
+            </Link>
+
+            <Link
+              to="/cars"
+              className={`h-full flex items-center px-4 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider transition-colors ${
+                isActive('/cars') ? 'bg-[#d32f2f] text-white' : 'text-neutral-300 hover:text-white hover:bg-[#252528]'
+              }`}
+            >
+              Bộ Sưu Tập Xe
+            </Link>
+
+            {(!user || user.role === 'Customer') && (
+              <Link
+                to="/become-host"
+                className={`h-full flex items-center px-4 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider transition-colors ${
+                  isActive('/become-host') ? 'bg-[#d32f2f] text-white' : 'text-neutral-300 hover:text-white hover:bg-[#252528]'
+                }`}
+              >
+                Gửi Xe Cho Thuê
+              </Link>
+            )}
+
+            {user && user.role === 'Customer' && (
+              <Link
+                to="/profile"
+                className={`h-full flex items-center px-4 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider transition-colors ${
+                  isActive('/profile') ? 'bg-[#d32f2f] text-white' : 'text-neutral-300 hover:text-white hover:bg-[#252528]'
+                }`}
+              >
+                Chuyến Đi Của Tôi
+              </Link>
+            )}
+
+            {user && user.role === 'Owner' && (
+              <Link
+                to="/host-dashboard"
+                className={`h-full flex items-center px-4 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider transition-colors ${
+                  isActive('/host-dashboard') ? 'bg-[#d32f2f] text-white' : 'text-neutral-300 hover:text-white hover:bg-[#252528]'
+                }`}
+              >
+                Dashboard Chủ Xe
+              </Link>
+            )}
+          </nav>
+
+          {/* Action CTA Button */}
+          <div className="flex items-center gap-3">
+            <Link
+              to="/cars"
+              className="px-4 py-2 bg-[#d32f2f] hover:bg-[#b71c1c] text-white rounded-md text-xs font-['Space_Grotesk'] font-bold uppercase tracking-wider transition-all shadow-xs"
+            >
+              Đặt Xe Ngay
+            </Link>
+          </div>
+
+        </div>
+      </div>
+    </header>
   );
 };
 

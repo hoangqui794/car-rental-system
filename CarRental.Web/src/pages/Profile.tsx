@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { User, ShieldCheck, Star, Car, Calendar, DollarSign, X, MessageSquare, CheckCircle2, Crown } from 'lucide-react';
 
 interface BookingHistory {
   id: number;
@@ -8,12 +9,13 @@ interface BookingHistory {
   startDate: string;
   endDate: string;
   totalPrice: number;
-  status: 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled';
+  status: 'Completed' | 'Cancelled' | 'Active';
   image: string;
+  plate: string;
 }
 
 const Profile: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('trips');
+  const [activeTab, setActiveTab] = useState<'trips' | 'profile'>('trips');
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedCarName, setSelectedCarName] = useState('');
   const [rating, setRating] = useState(5);
@@ -22,21 +24,23 @@ const Profile: React.FC = () => {
   const [trips] = useState<BookingHistory[]>([
     {
       id: 1,
-      carName: 'Mitsubishi Xpander 2023',
-      startDate: '12/10/2023',
-      endDate: '15/10/2023',
-      totalPrice: 2550000,
+      carName: 'Porsche Taycan 4S Cross Turismo',
+      plate: '51K-889.23',
+      startDate: '12/10/2026',
+      endDate: '14/10/2026',
+      totalPrice: 9600000,
       status: 'Completed',
-      image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=200'
+      image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80&w=800'
     },
     {
       id: 2,
-      carName: 'Tesla Model Y',
-      startDate: '20/11/2023',
-      endDate: '22/11/2023',
-      totalPrice: 3600000,
-      status: 'Cancelled',
-      image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&q=80&w=200'
+      carName: 'Tesla Model S Plaid Carbon',
+      plate: '51H-123.45',
+      startDate: '20/11/2026',
+      endDate: '21/11/2026',
+      totalPrice: 3500000,
+      status: 'Completed',
+      image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=800'
     }
   ]);
 
@@ -47,164 +51,204 @@ const Profile: React.FC = () => {
 
   const handleSubmitReview = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Đã gửi đánh giá ${rating} sao cho ${selectedCarName}: "${comment}"`);
+    alert(`Cảm ơn bạn đã gửi đánh giá ${rating}★ cho ${selectedCarName}: "${comment}"`);
     setShowReviewModal(false);
     setComment('');
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-[#fafafc] text-neutral-900 selection:bg-blue-600 selection:text-white">
       <Navbar />
-      <main className="pt-24 pb-12 max-w-[1280px] mx-auto px-10 w-full flex-grow">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Left profile summary card */}
-          <div className="bg-white rounded-3xl p-6 border border-zinc-200/50 premium-shadow h-fit text-center space-y-4">
-            <div className="w-24 h-24 bg-zinc-200 rounded-full mx-auto overflow-hidden">
-              <img 
-                alt="Avatar" 
-                className="w-full h-full object-cover" 
-                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200" 
-              />
+
+      <main className="pt-28 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-grow">
+        
+        {/* Page Header */}
+        <div className="pb-6 mb-8 border-b border-neutral-200/80">
+          <div className="inline-flex items-center gap-1.5 text-xs font-mono text-neutral-500 font-bold uppercase tracking-wider mb-1">
+            <Crown className="w-3.5 h-3.5 text-amber-500" />
+            SMARTDRIVE BLACK CARD MEMBER
+          </div>
+          <h1 className="font-['Space_Grotesk'] text-3xl font-black text-neutral-950 tracking-tight">
+            Tài Khoản & Hành Trình Của Bạn
+          </h1>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Left Profile Identity Summary */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-neutral-200/90 shadow-sm text-center space-y-4">
+              <div className="w-20 h-20 rounded-full bg-neutral-900 text-white mx-auto flex items-center justify-center font-['Space_Grotesk'] font-bold text-2xl border-2 border-amber-400">
+                HQ
+              </div>
+              <div>
+                <h3 className="font-['Space_Grotesk'] text-lg font-bold text-neutral-950">Trần Hoàng Quân</h3>
+                <p className="text-xs font-mono text-neutral-400">Hội viên VIP từ 2024 · 5 chuyến hoàn tất</p>
+              </div>
+              
+              <div className="flex flex-col gap-1.5 pt-4 border-t border-neutral-100 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider">
+                <button 
+                  onClick={() => setActiveTab('trips')}
+                  className={`py-2.5 px-4 rounded-xl text-left transition-all cursor-pointer ${
+                    activeTab === 'trips' ? 'bg-neutral-950 text-white shadow-xs' : 'text-neutral-600 hover:bg-neutral-50'
+                  }`}
+                >
+                  Lịch sử chuyến đi
+                </button>
+                <button 
+                  onClick={() => setActiveTab('profile')}
+                  className={`py-2.5 px-4 rounded-xl text-left transition-all cursor-pointer ${
+                    activeTab === 'profile' ? 'bg-neutral-950 text-white shadow-xs' : 'text-neutral-600 hover:bg-neutral-50'
+                  }`}
+                >
+                  Hồ sơ định danh eKYC
+                </button>
+              </div>
             </div>
-            <div>
-              <h3 className="font-sans text-[18px] font-bold text-zinc-900">Nguyễn Văn A</h3>
-              <p className="font-sans text-[12px] text-zinc-500">Thành viên từ 2024</p>
-            </div>
-            
-            <div className="flex flex-col gap-2 pt-4 border-t border-zinc-100 text-sans text-[14px]">
-              <button 
-                onClick={() => setActiveTab('profile')}
-                className={`py-2 px-4 rounded-xl text-left transition-colors ${
-                  activeTab === 'profile' ? 'bg-primary/10 text-primary font-semibold' : 'text-zinc-600 hover:bg-zinc-50'
-                }`}
-              >
-                Thông tin cá nhân
-              </button>
-              <button 
-                onClick={() => setActiveTab('trips')}
-                className={`py-2 px-4 rounded-xl text-left transition-colors ${
-                  activeTab === 'trips' ? 'bg-primary/10 text-primary font-semibold' : 'text-zinc-600 hover:bg-zinc-50'
-                }`}
-              >
-                Chuyến đi của tôi
-              </button>
+
+            <div className="bg-neutral-950 text-white rounded-3xl p-6 border border-neutral-800 space-y-3">
+              <div className="flex items-center gap-2 text-amber-400 text-xs font-mono font-bold">
+                <ShieldCheck className="w-4 h-4" /> ĐÃ XÁC MINH DANH TÍNH
+              </div>
+              <p className="text-xs text-neutral-400 leading-snug">
+                Tài khoản của bạn đã hoàn tất eKYC và kích hoạt mở khoá tức thì qua chìa khoá số Digital Keyless.
+              </p>
             </div>
           </div>
 
-          {/* Right details area */}
-          <div className="lg:col-span-3">
+          {/* Right Details Container */}
+          <div className="lg:col-span-8">
             {activeTab === 'profile' ? (
-              <div className="bg-white rounded-3xl p-8 border border-zinc-200/50 premium-shadow space-y-6">
-                <h2 className="font-sans text-[22px] font-bold text-zinc-900">Thông tin cá nhân</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-1">
-                    <p className="font-sans text-[12px] text-zinc-500 font-semibold">Họ và tên</p>
-                    <p className="font-sans text-[15px] font-bold text-zinc-800">Nguyễn Văn A</p>
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-neutral-200/90 shadow-sm space-y-6">
+                <h2 className="font-['Space_Grotesk'] text-lg font-bold text-neutral-950 uppercase tracking-wider pb-3 border-b border-neutral-100">
+                  Thông tin cá nhân & Giấy phép
+                </h2>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 font-mono text-xs">
+                  <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-200/60 space-y-1">
+                    <span className="text-neutral-400 block uppercase">Họ và tên</span>
+                    <span className="font-bold text-sm text-neutral-950">Trần Hoàng Quân</span>
                   </div>
-                  <div className="space-y-1">
-                    <p className="font-sans text-[12px] text-zinc-500 font-semibold">Số điện thoại</p>
-                    <p className="font-sans text-[15px] font-bold text-zinc-800">0901234567</p>
+                  <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-200/60 space-y-1">
+                    <span className="text-neutral-400 block uppercase">Số điện thoại</span>
+                    <span className="font-bold text-sm text-neutral-950">0918 234 567</span>
                   </div>
-                  <div className="space-y-1">
-                    <p className="font-sans text-[12px] text-zinc-500 font-semibold">Email</p>
-                    <p className="font-sans text-[15px] font-bold text-zinc-800">nguyenvana@gmail.com</p>
+                  <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-200/60 space-y-1">
+                    <span className="text-neutral-400 block uppercase">Email liên hệ</span>
+                    <span className="font-bold text-sm text-neutral-950">quan.tran@gmail.com</span>
                   </div>
-                  <div className="space-y-1">
-                    <p className="font-sans text-[12px] text-zinc-500 font-semibold">Bằng lái xe hạng</p>
-                    <p className="font-sans text-[15px] font-bold text-zinc-800">B2 (Đã xác minh)</p>
+                  <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-200/60 space-y-1">
+                    <span className="text-neutral-400 block uppercase">Hạng bằng lái xe</span>
+                    <span className="font-bold text-sm text-emerald-600">B2 (GPLX-790123456789)</span>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
-                <h2 className="font-sans text-[22px] font-bold text-zinc-900 mb-6">Lịch sử đặt xe</h2>
+                <div className="flex items-center justify-between pb-2 text-xs font-mono text-neutral-500">
+                  <span>LỊCH SỬ {trips.length} CHUYẾN ĐI GẦN NHẤT</span>
+                  <span>100% HOÀN CỌC ĐẦY ĐỦ</span>
+                </div>
                 
                 {trips.map((trip) => (
-                  <div key={trip.id} className="bg-white rounded-3xl p-6 border border-zinc-200/50 premium-shadow flex flex-col md:flex-row gap-6 items-center">
-                    <div className="w-full md:w-32 h-24 bg-zinc-100 rounded-2xl overflow-hidden flex-shrink-0">
-                      <img alt={trip.carName} className="w-full h-full object-cover" src={trip.image} />
-                    </div>
-                    
-                    <div className="flex-grow space-y-2 text-center md:text-left">
-                      <div className="flex flex-col md:flex-row items-center gap-3">
-                        <h3 className="font-sans text-[18px] font-bold text-zinc-800">{trip.carName}</h3>
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          trip.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                        }`}>
-                          {trip.status === 'Completed' ? 'Đã hoàn thành' : 'Đã hủy'}
-                        </span>
+                  <div key={trip.id} className="bg-white rounded-3xl p-5 sm:p-6 border border-neutral-200/90 shadow-sm flex flex-col sm:flex-row gap-5 items-center justify-between">
+                    <div className="flex items-center gap-4 w-full sm:w-auto">
+                      <div className="w-24 h-20 bg-neutral-100 rounded-2xl overflow-hidden flex-shrink-0 border border-neutral-200/60">
+                        <img alt={trip.carName} className="w-full h-full object-cover" src={trip.image} />
                       </div>
-                      <p className="font-sans text-[12px] text-zinc-500">Thời gian thuê: {trip.startDate} - {trip.endDate}</p>
-                      <p className="font-sans text-[14px] font-bold text-primary">Tổng tiền: {trip.totalPrice.toLocaleString('vi-VN')} đ</p>
+                      
+                      <div className="space-y-1">
+                        <h3 className="font-['Space_Grotesk'] text-sm font-bold text-neutral-950">
+                          {trip.carName}
+                        </h3>
+                        <p className="font-mono text-xs text-neutral-500">
+                          Biển số: {trip.plate} · {trip.startDate} - {trip.endDate}
+                        </p>
+                        <p className="font-mono text-xs font-bold text-neutral-900 tabular-nums">
+                          Tổng chi phí: {trip.totalPrice.toLocaleString('vi-VN')} ₫
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="flex-shrink-0">
-                      {trip.status === 'Completed' && (
-                        <button 
-                          onClick={() => handleOpenReview(trip.carName)}
-                          className="px-4 py-2 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-xl font-sans text-[13px] font-semibold transition-all"
-                        >
-                          Viết đánh giá
-                        </button>
-                      )}
+                    <div className="flex items-center gap-3 w-full sm:w-auto justify-end pt-3 sm:pt-0 border-t sm:border-t-0 border-neutral-100">
+                      <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 inline-flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" />
+                        Đã hoàn thành
+                      </span>
+
+                      <button 
+                        onClick={() => handleOpenReview(trip.carName)}
+                        className="px-3.5 py-1.5 bg-neutral-950 hover:bg-blue-600 text-white rounded-xl font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                      >
+                        Đánh giá xe
+                      </button>
                     </div>
                   </div>
                 ))}
               </div>
             )}
           </div>
+
         </div>
 
-        {/* Write Review Modal */}
+        {/* Review Modal */}
         {showReviewModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 space-y-6 premium-shadow">
-              <div className="flex justify-between items-center">
-                <h3 className="font-sans text-[20px] font-bold text-zinc-900">Đánh giá chuyến đi</h3>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-neutral-200 space-y-6">
+              <div className="flex justify-between items-center pb-3 border-b border-neutral-100">
+                <h3 className="font-['Space_Grotesk'] text-lg font-black text-neutral-950">Đánh Giá Trải Nghiệm Xe</h3>
                 <button 
                   onClick={() => setShowReviewModal(false)}
-                  className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-200"
+                  className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center text-neutral-600 cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-[18px]">close</span>
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <p className="font-sans text-[14px] text-zinc-600">Bạn đánh giá chất lượng xe <strong>{selectedCarName}</strong> như thế nào?</p>
+              <p className="text-xs text-neutral-600">
+                Hãy chia sẻ cảm nhận thực tế của bạn khi cầm lái dòng xe <strong>{selectedCarName}</strong>:
+              </p>
 
               <form onSubmit={handleSubmitReview} className="space-y-4">
-                <div className="flex justify-center gap-2">
+                <div className="flex justify-center gap-2 py-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       type="button"
                       onClick={() => setRating(star)}
-                      className={`text-[32px] ${rating >= star ? 'text-yellow-500' : 'text-zinc-300'}`}
+                      className={`text-2xl transition-transform hover:scale-110 cursor-pointer ${
+                        rating >= star ? 'text-amber-400' : 'text-neutral-200'
+                      }`}
                     >
                       ★
                     </button>
                   ))}
                 </div>
 
-                <div className="space-y-1">
-                  <label className="font-sans text-[14px] font-semibold text-zinc-700">Lời nhận xét</label>
+                <div>
                   <textarea
                     required
                     rows={4}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    placeholder="Hãy chia sẻ trải nghiệm thực tế của bạn..."
-                    className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl focus:ring-2 focus:ring-primary/20 font-sans text-[14px] outline-none resize-none"
+                    placeholder="Xe sạch sẽ, khả năng tăng tốc mượt mà, bàn giao đúng giờ..."
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200/80 rounded-xl focus:border-neutral-950 focus:bg-white text-xs outline-none resize-none"
                   />
                 </div>
 
-                <button type="submit" className="w-full py-3 bg-primary text-white font-sans text-[14px] font-semibold rounded-xl hover:bg-primary-container transition-all">
-                  Gửi đánh giá
+                <button 
+                  type="submit" 
+                  className="w-full py-3 bg-neutral-950 hover:bg-blue-600 text-white font-['Space_Grotesk'] text-xs font-extrabold uppercase tracking-widest rounded-xl text-center transition-all cursor-pointer shadow-xs"
+                >
+                  Gửi đánh giá xác thực
                 </button>
               </form>
             </div>
           </div>
         )}
+
       </main>
+
       <Footer />
     </div>
   );

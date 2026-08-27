@@ -69,7 +69,10 @@ export default {
         "stack-lg": "48px"
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display: ['Plus Jakarta Sans', 'Space Grotesk', 'sans-serif'],
+        heading: ['Space Grotesk', 'Plus Jakarta Sans', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       }
     },
   },

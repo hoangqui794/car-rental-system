@@ -2,55 +2,76 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { CheckCircle2, ShieldCheck, KeyRound, ArrowRight, ArrowLeft } from 'lucide-react';
 
 const Success: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-[#fafafc] text-neutral-900 selection:bg-blue-600 selection:text-white">
       <Navbar />
-      <main className="pt-24 pb-12 max-w-md mx-auto px-6 w-full flex-grow flex flex-col justify-center items-center text-center space-y-6">
-        <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center text-green-600 animate-bounce">
-          <span className="material-symbols-outlined text-[64px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-            check_circle
-          </span>
+
+      <main className="pt-28 pb-16 max-w-lg mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center items-center text-center space-y-6">
+        
+        {/* Luxury Confirmation Badge */}
+        <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shadow-sm">
+          <CheckCircle2 className="w-8 h-8" />
         </div>
         
         <div className="space-y-2">
-          <h1 className="font-sans text-[28px] font-bold text-zinc-900">Đặt xe thành công!</h1>
-          <p className="font-sans text-[15px] text-zinc-500">
-            Cảm ơn bạn đã lựa chọn dịch vụ của SmartDrive. Đơn hàng của bạn đã được xác nhận.
+          <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-emerald-600">
+            XÁC THỰC THÀNH CÔNG
+          </span>
+          <h1 className="font-['Space_Grotesk'] text-2xl sm:text-3xl font-black text-neutral-950 tracking-tight">
+            Đặt Xe & Thanh Toán Thành Công
+          </h1>
+          <p className="text-xs sm:text-sm text-neutral-500 max-w-sm mx-auto leading-relaxed">
+            Chuyến đi của bạn đã được xác nhận. Đội ngũ Concierge sẽ chuẩn bị xe và bàn giao tận nơi theo đúng lịch hẹn.
           </p>
         </div>
 
-        <div className="w-full bg-white rounded-3xl p-6 border border-zinc-200/50 premium-shadow text-left space-y-3 font-sans text-[14px]">
-          <div className="flex justify-between border-b border-zinc-100 pb-2">
-            <span className="text-zinc-500">Mã đặt xe</span>
-            <span className="font-bold text-primary">#SD-98271</span>
+        {/* Receipt Voucher Card */}
+        <div className="w-full bg-white rounded-3xl p-6 border border-neutral-200/90 shadow-sm text-left space-y-3 font-mono text-xs">
+          <div className="flex justify-between border-b border-neutral-100 pb-2.5">
+            <span className="text-neutral-400">MÃ ĐẶT XE VIP</span>
+            <span className="font-bold text-neutral-950">#SD-98271</span>
           </div>
-          <div className="flex justify-between border-b border-zinc-100 pb-2">
-            <span className="text-zinc-500">Dòng xe</span>
-            <span className="font-medium text-zinc-800">Mitsubishi Xpander 2023</span>
+          <div className="flex justify-between border-b border-neutral-100 pb-2.5">
+            <span className="text-neutral-400">DÒNG PHƯƠNG TIỆN</span>
+            <span className="font-bold text-neutral-950">Porsche Taycan 4S Cross</span>
+          </div>
+          <div className="flex justify-between border-b border-neutral-100 pb-2.5">
+            <span className="text-neutral-400">CHÌA KHÓA DIGITAL</span>
+            <span className="font-bold text-blue-600 flex items-center gap-1">
+              <KeyRound className="w-3.5 h-3.5" /> Đã gửi qua SMS & App
+            </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-zinc-500">Trạng thái</span>
-            <span className="font-bold text-green-600">Đã thanh toán</span>
+            <span className="text-neutral-400">TRẠNG THÁI</span>
+            <span className="font-bold text-emerald-600 flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5" /> Đã thanh toán 100%
+            </span>
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 w-full">
+        {/* Navigation Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 w-full font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider">
           <Link 
             to="/profile" 
-            className="flex-1 py-3 bg-primary text-white rounded-xl font-sans text-[14px] font-semibold hover:bg-primary-container text-center transition-all shadow-md shadow-primary/10"
+            className="flex-1 py-3.5 bg-neutral-950 hover:bg-blue-600 text-white rounded-xl text-center flex items-center justify-center gap-2 transition-all shadow-md shadow-neutral-950/10 cursor-pointer"
           >
-            Chuyến đi của tôi
+            <span>Quản lý chuyến đi</span>
+            <ArrowRight className="w-4 h-4" />
           </Link>
           <Link 
             to="/" 
-            className="flex-1 py-3 bg-zinc-100 text-zinc-700 hover:bg-zinc-200 rounded-xl font-sans text-[14px] font-semibold text-center transition-all"
+            className="flex-1 py-3.5 bg-white hover:bg-neutral-50 text-neutral-800 border border-neutral-200/90 rounded-xl text-center flex items-center justify-center gap-2 transition-colors cursor-pointer"
           >
-            Về trang chủ
+            <ArrowLeft className="w-4 h-4" />
+            <span>Về trang chủ</span>
           </Link>
         </div>
+
       </main>
+
       <Footer />
     </div>
   );

@@ -1,58 +1,135 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { Car, Phone, Mail, MapPin, Clock, ShieldCheck, ArrowRight, Send } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-white border-t border-zinc-200/50">
-      <div className="max-w-[1280px] mx-auto px-10 py-12">
-        <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
-          <div className="max-w-xs">
-            <h2 className="font-sans text-[24px] font-bold text-primary mb-4">SMARTDRIVE</h2>
-            <p className="font-sans text-[16px] text-zinc-600">
-              Nâng tầm trải nghiệm thuê xe với công nghệ và sự tiện nghi đỉnh cao.
+    <footer className="bg-[#1a1a1a] text-neutral-300 border-t border-[#2d2d30]">
+      
+      {/* Main 3-Column Footer Section (Studied from Reference DNA) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
+          
+          {/* Column 1: Brand & Newsletter */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-[#d32f2f] rounded flex items-center justify-center text-white">
+                <Car className="w-4 h-4" />
+              </div>
+              <span className="font-['Space_Grotesk'] font-bold text-lg text-white tracking-tight">
+                SMARTDRIVE
+              </span>
+            </div>
+            
+            <p className="text-xs text-neutral-400 leading-relaxed">
+              Hệ thống dịch vụ cho thuê xe thể thao, xe điện và xe sang hàng đầu. Bàn giao tận nơi tại Hà Nội, TP.HCM & Đà Nẵng với tiêu chuẩn 5 sao.
             </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-8">
-            <div>
-              <h4 className="font-sans text-[14px] font-semibold text-zinc-800 mb-4">Nền tảng</h4>
-              <ul className="space-y-3 font-sans text-[16px] text-zinc-600">
-                <li><a className="hover:text-primary transition-colors" href="#">Tìm xe</a></li>
-                <li><a className="hover:text-primary transition-colors" href="#">Trở thành chủ xe</a></li>
-                <li><a className="hover:text-primary transition-colors" href="#">Ứng dụng di động</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-sans text-[14px] font-semibold text-zinc-800 mb-4">Hỗ trợ</h4>
-              <ul className="space-y-3 font-sans text-[16px] text-zinc-600">
-                <li><a className="hover:text-primary transition-colors" href="#">Help Center</a></li>
-                <li><a className="hover:text-primary transition-colors" href="#">Contact Us</a></li>
-                <li><a className="hover:text-primary transition-colors" href="#">Cẩm nang lái xe</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-sans text-[14px] font-semibold text-zinc-800 mb-4">Pháp lý</h4>
-              <ul className="space-y-3 font-sans text-[16px] text-zinc-600">
-                <li><a className="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
-                <li><a className="hover:text-primary transition-colors" href="#">Terms of Service</a></li>
-              </ul>
+
+            <div className="pt-2">
+              <h4 className="font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider text-white mb-2">
+                Đăng ký nhận ưu đãi độc quyền
+              </h4>
+              <form onSubmit={(e) => { e.preventDefault(); alert('Cảm ơn bạn đã đăng ký nhận tin từ SmartDrive!'); }} className="flex gap-2">
+                <input
+                  type="email"
+                  required
+                  placeholder="Nhập email của bạn..."
+                  className="px-3.5 py-2 bg-[#252528] border border-[#3a3a3e] rounded text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-[#d32f2f] flex-1 font-mono"
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-[#d32f2f] hover:bg-[#b71c1c] text-white rounded text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer flex items-center justify-center"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                </button>
+              </form>
             </div>
           </div>
+
+          {/* Column 2: Recent Articles & Fleet Quick Links */}
+          <div className="space-y-3">
+            <h3 className="font-['Space_Grotesk'] text-sm font-bold uppercase tracking-wider text-white pb-2 border-b border-[#2d2d30] flex items-center gap-2">
+              <span className="w-1.5 h-3.5 bg-[#d32f2f]"></span>
+              Dịch Vụ & Danh Mục Xe
+            </h3>
+            
+            <ul className="space-y-2.5 text-xs text-neutral-400">
+              <li>
+                <Link to="/cars" className="hover:text-white hover:underline transition-colors flex items-center gap-1.5">
+                  <ArrowRight className="w-3 h-3 text-[#d32f2f]" /> Thuê xe tự lái cao cấp (Self-Drive VIP)
+                </Link>
+              </li>
+              <li>
+                <Link to="/cars" className="hover:text-white hover:underline transition-colors flex items-center gap-1.5">
+                  <ArrowRight className="w-3 h-3 text-[#d32f2f]" /> Chuyên cơ mặt đất có tài xế riêng (Chauffeur)
+                </Link>
+              </li>
+              <li>
+                <Link to="/become-host" className="hover:text-white hover:underline transition-colors flex items-center gap-1.5">
+                  <ArrowRight className="w-3 h-3 text-[#d32f2f]" /> Hợp tác ký gửi & cho thuê xe sinh lời
+                </Link>
+              </li>
+              <li>
+                <span className="hover:text-white cursor-pointer transition-colors flex items-center gap-1.5">
+                  <ArrowRight className="w-3 h-3 text-[#d32f2f]" /> Quy trình bàn giao xe không chạm (Digital Key)
+                </span>
+              </li>
+              <li>
+                <span className="hover:text-white cursor-pointer transition-colors flex items-center gap-1.5">
+                  <ArrowRight className="w-3 h-3 text-[#d32f2f]" /> Chính sách bảo hiểm toàn phần 5 Tỷ VNĐ
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Showroom & Contact Info */}
+          <div className="space-y-3">
+            <h3 className="font-['Space_Grotesk'] text-sm font-bold uppercase tracking-wider text-white pb-2 border-b border-[#2d2d30] flex items-center gap-2">
+              <span className="w-1.5 h-3.5 bg-[#d32f2f]"></span>
+              Hệ Thống Showroom & Hotline
+            </h3>
+
+            <div className="space-y-2.5 text-xs text-neutral-400">
+              <p className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-[#d32f2f] shrink-0 mt-0.5" />
+                <span>Showroom 1: Số 88 Nguyễn Du, P. Bến Nghé, Quận 1, TP.HCM</span>
+              </p>
+              <p className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-[#d32f2f] shrink-0 mt-0.5" />
+                <span>Showroom 2: Số 12 Ngô Quyền, P. Tràng Tiền, Q. Hoàn Kiếm, Hà Nội</span>
+              </p>
+              <p className="flex items-center gap-2 text-white font-bold font-mono">
+                <Phone className="w-4 h-4 text-[#d32f2f] shrink-0" />
+                <span>Hotline 24/7: 1900 8888 / 0918 234 567</span>
+              </p>
+              <p className="flex items-center gap-2 font-mono">
+                <Mail className="w-4 h-4 text-neutral-400 shrink-0" />
+                <span>support@smartdrive.vn</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-neutral-400 shrink-0" />
+                <span>Phục vụ giao nhận xe: 24/7 tất cả các ngày trong tuần</span>
+              </p>
+            </div>
+          </div>
+
         </div>
-        <div className="pt-6 border-t border-zinc-200/50 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="font-sans text-[12px] text-zinc-500">© 2026 SmartDrive Technologies. All rights reserved.</p>
-          <div className="flex gap-6">
-            <a className="text-zinc-600 hover:text-primary transition-colors" href="#">
-              <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path>
-              </svg>
-            </a>
-            <a className="text-zinc-600 hover:text-primary transition-colors" href="#">
-              <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"></path>
-              </svg>
-            </a>
+      </div>
+
+      {/* Bottom Copyright Bar */}
+      <div className="bg-[#111113] border-t border-[#252528] py-4 text-neutral-500 text-[11px] font-['Space_Grotesk']">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+          <p>© 2026 SmartDrive Technologies JSC. Đăng ký kinh doanh số 0317892341.</p>
+          <div className="flex items-center gap-4">
+            <span className="hover:text-neutral-300 cursor-pointer">Chính sách bảo mật</span>
+            <span>·</span>
+            <span className="hover:text-neutral-300 cursor-pointer">Điều khoản dịch vụ</span>
+            <span>·</span>
+            <span className="text-[#d32f2f] font-mono font-bold">Hệ thống: Trực tuyến 100%</span>
           </div>
         </div>
       </div>
+
     </footer>
   );
 };

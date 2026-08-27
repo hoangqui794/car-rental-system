@@ -16,13 +16,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={
-          <ProtectedRoute allowedRoles={['Customer']}>
-            <Home />
-
-          </ProtectedRoute>
-
-        } />
+        <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/cars" element={<CarListing />} />
         <Route path="/car-details" element={<CarDetails />} />

@@ -1,144 +1,523 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SearchWidget from '../components/SearchWidget';
 import CarCard from '../components/CarCard';
 import type { CarCardProps } from '../components/CarCard';
+import { 
+  ShieldCheck, 
+  KeyRound, 
+  CheckCircle2, 
+  ArrowRight, 
+  Gauge, 
+  BatteryCharging, 
+  PhoneCall, 
+  Award, 
+  Clock, 
+  Car, 
+  Users, 
+  Sparkles, 
+  Zap, 
+  ChevronRight, 
+  Compass, 
+  FileText 
+} from 'lucide-react';
 
-const mockCars: CarCardProps[] = [
+const luxuryFleet: (CarCardProps & { category: string; horsepower?: string })[] = [
   {
     id: 1,
-    image: "https://lh3.googleusercontent.com/aida/AP1WRLuSyj0T_u4FMBbb84kFm-DJbdPCKgs4Kis0SpOtk39Nqbu6wgzhm7nmSqjgakQptNBeL29nmF8wkR2WsQRlB0jAg5xGn4sRbguY56muwtmphoA3z5aJMTtWe3xwX_YSFlorWmFt36pK5j1-X-UjCmFz8MeRGCeuNddTLp1HXxb44JUUSb70fq770_18aSMG4ishM8Hh4DDjiBqbYgXT8D35l0C2FT5t4MMPYCRdEV52FoZem2xDYmNQVw",
-    brand: "Tesla",
-    name: "Tesla Model Y",
-    pricePerDay: 1800000,
-    rating: 4.9,
-    reviewsCount: 128,
-    location: "Quận 1, TP.HCM",
-    tags: ["Electric", "Autonomous"]
+    image: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80&w=800",
+    brand: "Porsche",
+    name: "Porsche Taycan 4S Cross Turismo",
+    pricePerDay: 4800000,
+    rating: 5.0,
+    reviewsCount: 52,
+    location: "Quận 1, TP. Hồ Chí Minh",
+    tags: ["800V Architecture", "Sport Chrono", "Air Suspension"],
+    category: "supercar",
+    batteryRange: "490 km",
+    acceleration: "3.9s",
+    horsepower: "530 HP"
   },
   {
     id: 2,
-    image: "https://lh3.googleusercontent.com/aida/AP1WRLtatmAaT7GmPxFkj9tB5YjGcErjrr3U0ASymxfPkNPaIygVFOjOm32wdViOB7QjdCRYav5h_usCLkKrqnIt1BRYSKBfNuZXNfH21hahdApsV4DPt0b8pSP0iN7mGe7kjCiPv7jfdVvhPqCioRN9lymgdr5HqJTygFodW8m0gx_uILwePy2Joal1FSe9VJqoeh51dvD5rFDGmpD5K76mOTG9XaexdYmsV4ZCxaqZv_Gw_y5DLdNID4QEbYw",
-    brand: "Volt",
-    name: "Volt Lux S1",
-    pricePerDay: 1200000,
-    rating: 4.8,
-    reviewsCount: 85,
-    location: "Quận 7, TP.HCM",
-    tags: ["Smart Tech", "AWD"]
+    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=800",
+    brand: "Tesla",
+    name: "Tesla Model S Plaid Carbon",
+    pricePerDay: 3500000,
+    rating: 4.98,
+    reviewsCount: 168,
+    location: "Hoàn Kiếm, Hà Nội",
+    tags: ["Tri-Motor AWD", "Full Self-Driving", "Yoke Steering"],
+    category: "supercar",
+    batteryRange: "637 km",
+    acceleration: "2.1s",
+    horsepower: "1,020 HP"
   },
   {
     id: 3,
-    image: "https://lh3.googleusercontent.com/aida/AP1WRLuWF4dGqoILmu2xfd_kNQBB0RPjPeitft1GzxZJYty9WLi-s9UBfiAI8GEISdnkEnc_o4zxfXWbHt65_UOtIfciKISeBhDr2x2vfwmj2qPLeiI71PDlpSw3FGe4A7ahfpMncvjoLil-1NAonUXYJ4HbkfhDC0XTJDnj0orxTWnOvx69Pht_Ne7qyDlI1_i1zBm5X1UekaCgLZ6UhYxNwW_UhN0GcC0mEISWUKizztO4-XecZD0J1lU3_zk",
-    brand: "E-Series",
-    name: "E-Series GT",
-    pricePerDay: 2500000,
+    image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=800",
+    brand: "Mercedes-Maybach",
+    name: "Mercedes-EQS 580 4MATIC Sedan",
+    pricePerDay: 4200000,
     rating: 5.0,
-    reviewsCount: 50,
-    location: "Ba Đình, Hà Nội",
-    tags: ["High Performance", "Luxury"]
+    reviewsCount: 79,
+    location: "Quận 1, TP. Hồ Chí Minh",
+    tags: ["MBUX Hyperscreen", "Ghế Massage VIP", "Burmester 3D"],
+    category: "executive",
+    batteryRange: "720 km",
+    acceleration: "4.3s",
+    horsepower: "516 HP"
+  },
+  {
+    id: 4,
+    image: "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&q=80&w=800",
+    brand: "VinFast",
+    name: "VinFast VF 9 Plus Captain Seats",
+    pricePerDay: 2400000,
+    rating: 4.94,
+    reviewsCount: 145,
+    location: "Thảo Điền, TP. Thủ Đức",
+    tags: ["Chuyên Cơ 6 Chỗ", "ADAS Level 2", "Nappa Leather"],
+    category: "suv",
+    batteryRange: "438 km",
+    acceleration: "6.5s",
+    horsepower: "402 HP"
+  },
+  {
+    id: 5,
+    image: "https://images.unsplash.com/photo-1536700503339-1e4b06520771?auto=format&fit=crop&q=80&w=800",
+    brand: "Tesla",
+    name: "Tesla Model Y Performance Dual-Motor",
+    pricePerDay: 1950000,
+    rating: 4.96,
+    reviewsCount: 210,
+    location: "Cầu Giấy, Hà Nội",
+    tags: ["Electric EV", "Autopilot HW4", "21\" Uberturbine"],
+    category: "ev",
+    batteryRange: "514 km",
+    acceleration: "3.5s",
+    horsepower: "450 HP"
+  },
+  {
+    id: 6,
+    image: "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&q=80&w=800",
+    brand: "Audi",
+    name: "Audi e-tron GT quattro",
+    pricePerDay: 4600000,
+    rating: 5.0,
+    reviewsCount: 41,
+    location: "Hải Châu, Đà Nẵng",
+    tags: ["quattro All-Wheel", "Laser Lights", "Matrix LED"],
+    category: "supercar",
+    batteryRange: "488 km",
+    acceleration: "4.1s",
+    horsepower: "522 HP"
   }
 ];
 
 const Home: React.FC = () => {
+  const [activeCategory, setActiveCategory] = useState('all');
+
+  const filteredFleet = activeCategory === 'all'
+    ? luxuryFleet
+    : luxuryFleet.filter(car => car.category === activeCategory);
+
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Top Navigation Bar */}
+    <div className="min-h-screen flex flex-col bg-white text-[#1a1a1a] selection:bg-[#d32f2f] selection:text-white">
+      {/* Top Navbar matching Reference Header */}
       <Navbar />
 
-      <main className="pt-20 flex-grow">
-        {/* Hero Section */}
-        <section className="relative h-[85vh] flex items-center overflow-hidden">
+      <main className="flex-1 pt-[104px]">
+
+        {/* =========================================================================
+            1. HERO SLIDER BANNER (From Studied Reference DNA)
+           ========================================================================= */}
+        <section className="relative h-[480px] sm:h-[560px] lg:h-[620px] bg-[#111113] overflow-hidden flex items-center">
+          
+          {/* Background Cinematic Vehicle Visual */}
           <div className="absolute inset-0 z-0">
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10"></div>
             <img 
-              alt="Luxury Electric Car" 
-              className="w-full h-full object-cover" 
-              src="https://lh3.googleusercontent.com/aida/AP1WRLvbRVVYM8_URC2SfbmXOcUwsz8jUN-zeHnjIuxexa0DfjJeUG-QTB7PlmW3Qh_OMep6MFecxdb7ChdFTNJ_fiqI37YH8fL7nGz1x8GkKMnbhUigv5C-tpSBkI2dFnRdC1kpnL-mTzLm2-_7i-cXq6ynHpWK8xC4_-EX4NHw-W8yU-vJc4_wS73AbaSBc4iZTTIRWl1notOaLeVctxzfjbQEqwM7wa12RziVdahHgBfBR-YnCK7txKbAyg" 
+              src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1920" 
+              alt="SmartDrive Luxury Fleet Hero"
+              className="w-full h-full object-cover opacity-70" 
             />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent"></div>
           </div>
-          <div className="relative z-20 max-w-[1280px] mx-auto px-10 w-full">
-            <div className="max-w-2xl">
-              <h1 className="font-sans text-[48px] md:text-[56px] leading-[1.1] font-bold text-white mb-6 tracking-tight">
-                Trải nghiệm tương lai của sự di chuyển
+
+          {/* Hero Content Overlay */}
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="max-w-2xl space-y-4">
+              
+              <div className="inline-flex items-center gap-2 bg-[#d32f2f] text-white px-3 py-1 text-xs font-['Space_Grotesk'] font-bold uppercase tracking-widest">
+                <span>DỊCH VỤ THUÊ XE THƯỢNG LƯU 2026</span>
+              </div>
+
+              <h1 className="font-['Space_Grotesk'] text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight uppercase">
+                Chuyên Nghiệp — Đẳng Cấp — Dẫn Đầu
               </h1>
-              <p className="font-sans text-[18px] text-white/90 mb-12 max-w-lg">
-                Khám phá bộ sưu tập xe điện và xe thông minh cao cấp nhất. Thuê xe nhanh chóng, thanh toán minh bạch và dịch vụ đặc quyền.
+
+              <p className="text-sm sm:text-base text-neutral-300 leading-relaxed font-['Plus_Jakarta_Sans'] max-w-xl">
+                Khám phá bộ sưu tập xe điện, siêu xe thể thao và sedan thương gia hàng đầu. Trải nghiệm nhận xe số hoá trong 45 phút, bảo hiểm toàn diện 100%.
               </p>
-              {/* Search Widget */}
-              <SearchWidget />
+
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <Link
+                  to="/cars"
+                  className="px-6 py-3.5 bg-[#d32f2f] hover:bg-[#b71c1c] text-white rounded font-['Space_Grotesk'] text-xs font-black uppercase tracking-wider transition-all shadow-md inline-flex items-center gap-2"
+                >
+                  <span>Khám phá đội xe</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <a
+                  href="tel:19008888"
+                  className="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white rounded font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider transition-all border border-white/30 backdrop-blur-sm inline-flex items-center gap-2"
+                >
+                  <PhoneCall className="w-4 h-4 text-[#d32f2f]" />
+                  <span>Hotline: 1900 8888</span>
+                </a>
+              </div>
+
             </div>
+          </div>
+
+        </section>
+
+        {/* =========================================================================
+            2. QUICK ACTION RIBBON (From Studied Reference DNA)
+           ========================================================================= */}
+        <div className="bg-[#1a1a1a] text-white border-y border-[#2d2d30] py-3.5 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div className="flex items-center gap-3">
+              <span className="w-2.5 h-2.5 bg-[#d32f2f] rounded-full animate-pulse"></span>
+              <span className="font-['Space_Grotesk'] text-xs sm:text-sm font-bold uppercase tracking-wider text-neutral-200">
+                ĐẶT LỊCH LÁI THỬ & BÀN GIAO XE TẬN SẢNH TẠI TP.HCM, HÀ NỘI & ĐÀ NẴNG
+              </span>
+            </div>
+            <Link
+              to="/cars"
+              className="px-4 py-1.5 bg-[#d32f2f] hover:bg-[#b71c1c] text-white text-xs font-['Space_Grotesk'] font-bold uppercase tracking-wider rounded transition-colors inline-flex items-center gap-1.5"
+            >
+              <span>Xem lịch xe trống</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+
+        {/* =========================================================================
+            3. 4 CORE VALUES / VALUE PROPOSITIONS (From Studied Reference DNA)
+           ========================================================================= */}
+        <section className="bg-[#f5f5f7] border-b border-[#e5e5ea] py-10 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <div className="flex items-start gap-3.5 p-4 bg-white rounded-lg border border-[#e5e5ea] shadow-2xs">
+              <div className="w-10 h-10 bg-[#f9f9fb] border border-[#e5e5ea] rounded flex items-center justify-center text-[#d32f2f] shrink-0">
+                <Award className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-['Space_Grotesk'] text-xs font-bold text-[#1a1a1a] uppercase tracking-wider">
+                  Đội Xe Kiểm Định 50 Điểm
+                </h4>
+                <p className="text-[11px] text-neutral-500 mt-0.5 leading-snug">
+                  100% xe đời mới 2024–2026, được bảo dưỡng định kỳ chính hãng.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3.5 p-4 bg-white rounded-lg border border-[#e5e5ea] shadow-2xs">
+              <div className="w-10 h-10 bg-[#f9f9fb] border border-[#e5e5ea] rounded flex items-center justify-center text-[#d32f2f] shrink-0">
+                <KeyRound className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-['Space_Grotesk'] text-xs font-bold text-[#1a1a1a] uppercase tracking-wider">
+                  Công Nghệ Digital Keyless
+                </h4>
+                <p className="text-[11px] text-neutral-500 mt-0.5 leading-snug">
+                  Mở khoá bằng điện thoại qua Bluetooth mã hoá, không thủ tục rườm rà.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3.5 p-4 bg-white rounded-lg border border-[#e5e5ea] shadow-2xs">
+              <div className="w-10 h-10 bg-[#f9f9fb] border border-[#e5e5ea] rounded flex items-center justify-center text-[#d32f2f] shrink-0">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-['Space_Grotesk'] text-xs font-bold text-[#1a1a1a] uppercase tracking-wider">
+                  Giao Xe Tận Nơi Trong 45 Phút
+                </h4>
+                <p className="text-[11px] text-neutral-500 mt-0.5 leading-snug">
+                  Bàn giao tại sân bay hoặc khách sạn 5 sao với pin sạc 100%.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3.5 p-4 bg-white rounded-lg border border-[#e5e5ea] shadow-2xs">
+              <div className="w-10 h-10 bg-[#f9f9fb] border border-[#e5e5ea] rounded flex items-center justify-center text-[#d32f2f] shrink-0">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-['Space_Grotesk'] text-xs font-bold text-[#1a1a1a] uppercase tracking-wider">
+                  Bảo Hiểm Toàn Diện 5 Tỷ
+                </h4>
+                <p className="text-[11px] text-neutral-500 mt-0.5 leading-snug">
+                  Bảo trợ 100% trách nhiệm & thân vỏ bởi PJICO và Bảo Việt.
+                </p>
+              </div>
+            </div>
+
           </div>
         </section>
 
-        {/* Featured Cars Section */}
-        <section className="py-12 bg-surface">
-          <div className="max-w-[1280px] mx-auto px-10">
-            <div className="flex justify-between items-end mb-12">
+        {/* =========================================================================
+            4. WELCOME STORY & DETAILED SEARCH DIPTYCH (From Studied Reference DNA)
+           ========================================================================= */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+            
+            {/* Left Column: Welcome Story */}
+            <div className="lg:col-span-7 space-y-5">
+              
               <div>
-                <span className="font-sans text-[12px] font-semibold text-primary uppercase tracking-widest block mb-2">
-                  Bộ sưu tập độc quyền
+                <span className="font-['Space_Grotesk'] text-xs font-bold text-[#d32f2f] uppercase tracking-widest block mb-1">
+                  CHÀO MỪNG ĐẾN VỚI SMARTDRIVE AUTOMOTIVE
                 </span>
-                <h2 className="font-sans text-[32px] font-bold text-zinc-900">Xe Nổi Bật</h2>
+                <h2 className="font-['Space_Grotesk'] text-2xl sm:text-4xl font-black text-[#1a1a1a] tracking-tight uppercase">
+                  Nâng tầm phong cách di chuyển của bạn
+                </h2>
               </div>
-              <a className="flex items-center gap-2 text-primary font-sans text-[14px] font-semibold hover:underline decoration-2 underline-offset-4" href="#">
-                Xem tất cả xe
-                <span className="material-symbols-outlined text-[18px]">open_in_new</span>
-              </a>
+
+              <p className="text-sm text-neutral-600 leading-relaxed">
+                SmartDrive là nền tảng tiên phong kết nối những dòng xe điện cao cấp, siêu xe thể thao và chuyên cơ mặt đất sang trọng với quý khách hàng có tiêu chuẩn khắt khe nhất. Mỗi phương tiện trong hệ thống đều trải qua quy trình thẩm định 50 bước nghiêm ngặt trước khi bàn giao.
+              </p>
+
+              <div className="space-y-2.5 pt-2 text-xs text-neutral-700 font-['Plus_Jakarta_Sans']">
+                <div className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#d32f2f] shrink-0" />
+                  <span>Đội xe chính hãng đầy đủ giấy tờ đăng kiểm, bảo dưỡng nghiêm ngặt</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#d32f2f] shrink-0" />
+                  <span>Minh bạch 100% chi phí, cam kết hoàn tiền cọc tự động trong 12 giờ</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#d32f2f] shrink-0" />
+                  <span>Hỗ trợ cứu hộ khẩn cấp và cấp xe thay thế VIP tương đương trong 30 phút</span>
+                </div>
+              </div>
+
+              <div className="pt-3">
+                <Link
+                  to="/cars"
+                  className="px-5 py-2.5 bg-[#1a1a1a] hover:bg-[#d32f2f] text-white rounded text-xs font-['Space_Grotesk'] font-bold uppercase tracking-wider transition-colors inline-flex items-center gap-2 shadow-2xs"
+                >
+                  <span>Tìm hiểu thêm về dịch vụ</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {mockCars.map((car) => (
+
+            {/* Right Column: Detailed Search Widget */}
+            <div className="lg:col-span-5">
+              <SearchWidget />
+            </div>
+
+          </div>
+        </section>
+
+        {/* =========================================================================
+            5. RECENT VEHICLES / FEATURED INVENTORY (From Studied Reference DNA)
+           ========================================================================= */}
+        <section className="bg-[#f5f5f7] border-y border-[#e5e5ea] py-16 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            
+            {/* Section Header with Red Accent Underline */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+              <div>
+                <span className="font-['Space_Grotesk'] text-xs font-bold text-[#d32f2f] uppercase tracking-widest block mb-1">
+                  DANH MỤC XE NỔI BẬT
+                </span>
+                <h2 className="font-['Space_Grotesk'] text-2xl sm:text-3xl font-black text-[#1a1a1a] uppercase tracking-tight flex items-center gap-2">
+                  <span>Recent Vehicles — Đội Xe Mới Nhất</span>
+                </h2>
+                <div className="w-16 h-1 bg-[#d32f2f] mt-2"></div>
+              </div>
+
+              {/* Category Filter Tabs */}
+              <div className="flex flex-wrap items-center gap-1.5 bg-white p-1 rounded-lg border border-[#e5e5ea]">
+                {[
+                  { key: 'all', label: 'Tất cả xe' },
+                  { key: 'supercar', label: 'Siêu xe & Thể thao' },
+                  { key: 'executive', label: 'Sedan Thương gia' },
+                  { key: 'suv', label: 'SUV 6-7 Chỗ VIP' },
+                  { key: 'ev', label: 'Thuần điện EV' }
+                ].map(cat => (
+                  <button
+                    key={cat.key}
+                    onClick={() => setActiveCategory(cat.key)}
+                    className={`px-3 py-1.5 text-xs font-bold font-['Space_Grotesk'] uppercase tracking-wider rounded transition-all cursor-pointer ${
+                      activeCategory === cat.key
+                        ? 'bg-[#d32f2f] text-white shadow-2xs'
+                        : 'text-neutral-600 hover:text-neutral-950 hover:bg-neutral-100'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Car Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredFleet.map(car => (
                 <CarCard key={car.id} {...car} />
               ))}
             </div>
+
+            {/* View All Button */}
+            <div className="mt-10 text-center">
+              <Link
+                to="/cars"
+                className="px-6 py-3 bg-[#1a1a1a] hover:bg-[#d32f2f] text-white font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider rounded transition-colors inline-flex items-center gap-2 shadow-xs"
+              >
+                <span>Xem tất cả 150+ xe trong showroom</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+
           </div>
         </section>
 
-        {/* Bento Grid */}
-        <section className="py-12 bg-white">
-          <div className="max-w-[1280px] mx-auto px-10">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[600px]">
-              <div className="md:col-span-8 bg-zinc-100 rounded-[32px] p-12 flex flex-col justify-end relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
-                <img 
-                  alt="Premium Urban Experience" 
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-                  src="https://lh3.googleusercontent.com/aida/AP1WRLvbRVVYM8_URC2SfbmXOcUwsz8jUN-zeHnjIuxexa0DfjJeUG-QTB7PlmW3Qh_OMep6MFecxdb7ChdFTNJ_fiqI37YH8fL7nGz1x8GkKMnbhUigv5C-tpSBkI2dFnRdC1kpnL-mTzLm2-_7i-cXq6ynHpWK8xC4_-EX4NHw-W8yU-vJc4_wS73AbaSBc4iZTTIRWl1notOaLeVctxzfjbQEqwM7wa12RziVdahHgBfBR-YnCK7txKbAyg" 
-                />
-                <div className="relative z-20 text-white">
-                  <h3 className="font-sans text-[32px] font-bold mb-4">Trải nghiệm di chuyển 5 sao</h3>
-                  <p className="font-sans text-[18px] opacity-80 max-w-lg">
-                    Quy trình giao xe tận nơi, hỗ trợ 24/7 và bảo hiểm chuyến đi toàn diện giúp bạn an tâm trên mọi cung đường.
-                  </p>
-                </div>
+        {/* =========================================================================
+            6. 5-COLUMN SERVICES & OPERATIONS (From Studied Reference DNA)
+           ========================================================================= */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center max-w-xl mx-auto mb-12">
+            <span className="font-['Space_Grotesk'] text-xs font-bold text-[#d32f2f] uppercase tracking-widest block mb-1">
+              DỊCH VỤ CHUYÊN NGHIỆP
+            </span>
+            <h3 className="font-['Space_Grotesk'] text-2xl sm:text-3xl font-black text-[#1a1a1a] uppercase tracking-tight">
+              Giải Pháp Di Chuyển Hoàn Hảo
+            </h3>
+            <div className="w-12 h-1 bg-[#d32f2f] mx-auto mt-2"></div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            
+            <div className="p-5 bg-[#f9f9fb] border border-[#e5e5ea] rounded-xl space-y-2.5">
+              <div className="w-8 h-8 bg-[#d32f2f] text-white rounded flex items-center justify-center">
+                <Car className="w-4 h-4" />
               </div>
-              <div className="md:col-span-4 flex flex-col gap-6">
-                <div className="flex-1 bg-primary text-white rounded-[32px] p-8 flex flex-col justify-between">
-                  <span className="material-symbols-outlined text-[48px]">bolt</span>
-                  <div>
-                    <h4 className="font-sans text-[24px] font-bold mb-2">Sạc siêu nhanh</h4>
-                    <p className="font-sans text-[16px] opacity-80">Mạng lưới trạm sạc phủ khắp giúp hành trình không bao giờ gián đoạn.</p>
-                  </div>
-                </div>
-                <div className="flex-1 bg-secondary-container text-zinc-900 rounded-[32px] p-8 flex flex-col justify-between">
-                  <span className="material-symbols-outlined text-[48px] text-primary">verified</span>
-                  <div>
-                    <h4 className="font-sans text-[24px] font-bold mb-2">Chủ xe tin cậy</h4>
-                    <p className="font-sans text-[16px] opacity-80">100% chủ xe được xác thực danh tính và lịch sử dịch vụ rõ ràng.</p>
-                  </div>
-                </div>
-              </div>
+              <h4 className="font-['Space_Grotesk'] text-xs font-bold uppercase text-[#1a1a1a]">
+                Thuê Xe Tự Lái VIP
+              </h4>
+              <p className="text-[11px] text-neutral-500 leading-relaxed">
+                Tự do cầm lái các dòng xe thể thao và xe điện cao cấp đời mới 2026.
+              </p>
             </div>
+
+            <div className="p-5 bg-[#f9f9fb] border border-[#e5e5ea] rounded-xl space-y-2.5">
+              <div className="w-8 h-8 bg-[#1a1a1a] text-white rounded flex items-center justify-center">
+                <Users className="w-4 h-4" />
+              </div>
+              <h4 className="font-['Space_Grotesk'] text-xs font-bold uppercase text-[#1a1a1a]">
+                Tài Xế Riêng Chauffeur
+              </h4>
+              <p className="text-[11px] text-neutral-500 leading-relaxed">
+                Tài xế chuyên nghiệp, lịch thiệp, giao tiếp tiếng Anh phục vụ lãnh đạo & VIP.
+              </p>
+            </div>
+
+            <div className="p-5 bg-[#f9f9fb] border border-[#e5e5ea] rounded-xl space-y-2.5">
+              <div className="w-8 h-8 bg-[#d32f2f] text-white rounded flex items-center justify-center">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <h4 className="font-['Space_Grotesk'] text-xs font-bold uppercase text-[#1a1a1a]">
+                Gửi Xe Cho Thuê
+              </h4>
+              <p className="text-[11px] text-neutral-500 leading-relaxed">
+                Tối ưu dòng tiền 25 – 60 triệu/tháng cho chủ sở hữu xe nhàn rỗi.
+              </p>
+            </div>
+
+            <div className="p-5 bg-[#f9f9fb] border border-[#e5e5ea] rounded-xl space-y-2.5">
+              <div className="w-8 h-8 bg-[#1a1a1a] text-white rounded flex items-center justify-center">
+                <Clock className="w-4 h-4" />
+              </div>
+              <h4 className="font-['Space_Grotesk'] text-xs font-bold uppercase text-[#1a1a1a]">
+                Phục Vụ & Cứu Hộ 24/7
+              </h4>
+              <p className="text-[11px] text-neutral-500 leading-relaxed">
+                Đội ngũ túc trực 24/7, sẵn sàng hỗ trợ kỹ thuật và giao xe bất kể ngày đêm.
+              </p>
+            </div>
+
+            <div className="p-5 bg-[#f9f9fb] border border-[#e5e5ea] rounded-xl space-y-2.5">
+              <div className="w-8 h-8 bg-[#d32f2f] text-white rounded flex items-center justify-center">
+                <Zap className="w-4 h-4" />
+              </div>
+              <h4 className="font-['Space_Grotesk'] text-xs font-bold uppercase text-[#1a1a1a]">
+                Trạm Sạc & Giao Xe
+              </h4>
+              <p className="text-[11px] text-neutral-500 leading-relaxed">
+                Mạng lưới hơn 1.200 trạm sạc đối tác miễn phí trên khắp 63 tỉnh thành.
+              </p>
+            </div>
+
           </div>
         </section>
+
+        {/* =========================================================================
+            7. DARK STATISTICS COUNTER (From Studied Reference DNA)
+           ========================================================================= */}
+        <section className="bg-[#1a1a1a] text-white py-14 px-4 sm:px-6 lg:px-8 border-y border-[#2d2d30]">
+          <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+            
+            <div className="space-y-1">
+              <span className="font-mono text-3xl sm:text-4xl font-black text-[#d32f2f] tabular-nums block">
+                2,500+
+              </span>
+              <p className="font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider text-neutral-300">
+                Chuyến Xe Hoàn Tất
+              </p>
+            </div>
+
+            <div className="space-y-1">
+              <span className="font-mono text-3xl sm:text-4xl font-black text-white tabular-nums block">
+                150+
+              </span>
+              <p className="font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider text-neutral-300">
+                Xe Sang & EV Sẵn Sàng
+              </p>
+            </div>
+
+            <div className="space-y-1">
+              <span className="font-mono text-3xl sm:text-4xl font-black text-[#d32f2f] tabular-nums block">
+                100%
+              </span>
+              <p className="font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider text-neutral-300">
+                Khách Hàng Hài Lòng
+              </p>
+            </div>
+
+            <div className="space-y-1">
+              <span className="font-mono text-3xl sm:text-4xl font-black text-white tabular-nums block">
+                45 Phút
+              </span>
+              <p className="font-['Space_Grotesk'] text-xs font-bold uppercase tracking-wider text-neutral-300">
+                Bàn Giao Tận Sảnh VIP
+              </p>
+            </div>
+
+          </div>
+        </section>
+
       </main>
 
       {/* Footer */}
       <Footer />
-
-      {/* Booking Progress Bar */}
-      <div className="booking-progress"></div>
     </div>
   );
 };
