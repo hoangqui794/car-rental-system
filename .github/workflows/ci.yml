@@ -1,0 +1,40 @@
+name: CarRental CI Pipeline
+
+#1. Trigger
+on:
+  push:
+    branches:
+     
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # Manual Trigger
+
+
+#2. Jobs
+jobs:
+  build:
+    name: Build and kiểm tra lỗi code
+    runs-on: ubuntu-latest# Máy ảo Linux chạy ngầm trên GitHub
+
+    steps:
+      # Bước 2.1: Lấy mã nguồn 
+      - name: 1. Checkout Code
+        uses: actions/checkout@v4
+      # Bước 2.2: cài đặt .Net 8
+      - name: 2. Setup .NET 8 SDK
+        uses: actions/setup-donet@v4
+        with:
+          donet-version: '8.0.x'
+          
+      # Bước 2.3: Tải các thư viện NuGet
+      - name : 3. Restore Dependencies
+        run : dotnet restore CarRentalSystem.sln
+
+      # Bước 2.4: Biên dịch toàn bộ Solution
+      - name : 4. Build Solution (Release Mode)
+        run: dotnet build CarRentalSystem.sln --no-restore --configuration Release
+  # Bước 2.5: Chạy Unit Tests (nếu có)
+      - name: 5. Run Tests
+        run: dotnet test CarRentalSystem.sln --no-build --configuration Release --verbosity normal
